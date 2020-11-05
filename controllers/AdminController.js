@@ -41,13 +41,16 @@ const adminLogin = async (req, res) => {
 
 };
 
+// Category İşlemleri
+
 const addCategory = async (req, res) => {
     if (isAdmin(req)) { // Admin ise
-        const params = ['categoryName'];
+        const params = ['categoryName', 'order'];
         if (!checkMissingParams(params, req, res)) return;
-        const { categoryName } = req.body;
+        const { categoryName, order } = req.body;
         const addCategory = new Category({
-            categoryName
+            categoryName,
+            order
         });
         await addCategory.save();
         res.status(200).send({ message: "category added" })
@@ -88,15 +91,17 @@ const updateCategory = async (req, res) => {
         if (isAdmin(req)) { // Admin ise
             const params = ['categoryId', 'categoryName'];
             if (!checkMissingParams(params, req, res)) return;
-            const { categoryId, categoryName } = req.body;
+            const { categoryId, categoryName, order } = req.body;
             const category = await Category.findById(categoryId)
             await category.updateOne({
-                categoryName
+                categoryName,
+                order
             })
             res.status(200).send({ message: 'updated' })
         }
     }
     catch (e) {
+        console.log(e)
         new errorHandler(res, 500, 0)
     }
 }
