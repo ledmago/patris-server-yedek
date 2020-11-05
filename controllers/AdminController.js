@@ -43,6 +43,10 @@ const adminLogin = async (req, res) => {
 
 // Category İşlemleri
 
+
+
+
+
 const addCategory = async (req, res) => {
     if (isAdmin(req)) { // Admin ise
         const params = ['categoryName', 'order'];
@@ -121,5 +125,17 @@ const deleteCategory = async (req, res) => {
         new errorHandler(res, 500, 0)
     }
 }
+
+
+
+
+
+// Category İşlemleri End
+
+
+
+
+
+
 
 module.exports = { adminLogin, addCategory, getCategory, getAllCategories, updateCategory, deleteCategory }
