@@ -15,11 +15,19 @@ app.use(bodyParser.urlencoded({ extended: false }))
 
 
 // -- ROUTES -- //
-
+// USER
 app.use('/api/registerUser', require('./routes/RegisterUser'));
 app.use('/api/logout', require('./routes/LogOut'));
 app.use('/api/login', require('./routes/Login'));
+
+
+// ADMIN ICIN
 app.use('/api/adminlogin', require('./routes/Admin/AdminLogin'));
+app.use('/api/addcategory', require('./routes/Admin/AddCategory'));
+app.use('/api/getcategory', require('./routes/Admin/GetCategory'));
+app.use('/api/getallcategories', require('./routes/Admin/GetAllCategories'));
+app.use('/api/updatecategory', require('./routes/Admin/UpdateCategory'));
+app.use('/api/deletecategory', require('./routes/Admin/DeleteCategory'));
 // -- ROUTES END -- //
 
 

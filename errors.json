@@ -10,5 +10,6 @@
     "10": "The email is already used by someone",
     "11": "The email is not valid",
     "12": "Your age should between 8 and 150",
-    "13": "Userame or password are wrong"
+    "13": "Userame or password are wrong",
+    "14": "Couldn't found the category"
 }

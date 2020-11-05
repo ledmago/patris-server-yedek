@@ -3,12 +3,13 @@ const User = require('../Schemas/User');
 const Admins = require('../Schemas/Admins');
 var validator = require('validator');
 const errorHandler = require('./ErrorHandler');
-const { isAdmin } = require('./General');
+const { isAdmin, checkLogin, checkMissingParams } = require('./General');
 const bcrypt = require('bcryptjs');
 const config = require('../config.json');
 var jwt = require('jsonwebtoken');
 const { request } = require('express');
 const Category = require("../Schemas/Category");
+const { findById } = require('../Schemas/User');
 const adminLogin = async (req, res) => {
 
 
@@ -48,9 +49,72 @@ const addCategory = async (req, res) => {
         const addCategory = new Category({
             categoryName
         });
+        await addCategory.save();
         res.status(200).send({ message: "category added" })
 
     }
 }
 
-module.exports = { adminLogin, addCategory }
+const getCategory = async (req, res) => {
+    try {
+        if (isAdmin(req)) { // Admin ise
+            const params = ['categoryId'];
+            if (!checkMissingParams(params, req, res)) return;
+            const { categoryId } = req.body;
+            const category = await Category.findById(categoryId)
+            res.status(200).send({ category })
+        }
+    }
+    catch (e) {
+        new errorHandler(res, 500, 0)
+    }
+}
+
+const getAllCategories = async (req, res) => {
+    try {
+        if (isAdmin(req)) { // Admin ise
+            // No need any parameters
+            const category = await Category.find()
+            res.status(200).send({ data: category })
+        }
+    }
+    catch (e) {
+        new errorHandler(res, 500, 0)
+    }
+}
+
+const updateCategory = async (req, res) => {
+    try {
+        if (isAdmin(req)) { // Admin ise
+            const params = ['categoryId', 'categoryName'];
+            if (!checkMissingParams(params, req, res)) return;
+            const { categoryId, categoryName } = req.body;
+            const category = await Category.findById(categoryId)
+            await category.updateOne({
+                categoryName
+            })
+            res.status(200).send({ message: 'updated' })
+        }
+    }
+    catch (e) {
+        new errorHandler(res, 500, 0)
+    }
+}
+
+const deleteCategory = async (req, res) => {
+    try {
+        if (isAdmin(req)) { // Admin ise
+            const params = ['categoryId'];
+            if (!checkMissingParams(params, req, res)) return;
+            const { categoryId } = req.body;
+            const category = await Category.findById(categoryId)
+            await category.deleteOne()
+            res.status(200).send({ message: 'deleted' })
+        }
+    }
+    catch (e) {
+        new errorHandler(res, 500, 0)
+    }
+}
+
+module.exports = { adminLogin, addCategory, getCategory, getAllCategories, updateCategory, deleteCategory }
