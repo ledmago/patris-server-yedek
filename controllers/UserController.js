@@ -160,36 +160,5 @@ const login = async (req, res) => {
 
 };
 
-const adminLogin = async (req, res) => {
 
-
-    if (await checkLogin(req) == false) {
-        const { email, password } = req.body;
-        const userByEmail = await Admins.findOne({ email });
-        if (userByEmail) {
-            const comparePassword = await bcrypt.compare(password, userByEmail.hash)
-            const token = jwt.sign({ email: email, type: 'admin' }, config.privateKey);
-            if (comparePassword) {
-                res.cookie('token', token); // set token to the cookie
-                res.status(200).send({ token: token, user: userByEmail })
-            }
-            else {
-                new errorHandler(res, 500, 13)
-            }
-        }
-        else {
-            new errorHandler(res, 500, 13)
-        }
-
-    }
-    else {
-        const user = await checkLogin(req);
-        res.status(200).send({ token: req.cookies.token, user: user })
-    }
-
-
-
-};
-
-
-module.exports = { registerUser, logOut, login, adminLogin };
+module.exports = { registerUser, logOut, login };

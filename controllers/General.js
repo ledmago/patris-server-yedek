@@ -3,6 +3,7 @@ var jwt = require('jsonwebtoken');
 const { use } = require('../routes/Login');
 const config = require('../config.json');
 const User = require('../Schemas/User');
+const Admins = require('../Schemas/Admins');
 const checkMissingParams = (array, req, res) => {
     try {
         array.forEach(key => {
@@ -46,5 +47,31 @@ const checkLogin = async (req) => {
 }
 
 
+const isAdmin = async (req) => {
 
-module.exports = { checkMissingParams, checkLogin };
+    try {
+        const token = req.cookies.token;
+
+        if (token) {
+            var result = jwt.verify(token, config.privateKey);
+            const user = await Admins.findOne({ userName: result.userName })
+
+            if (user && result.type == 'admin') {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        else {
+            return false;
+        }
+    }
+    catch (e) {
+        return false;
+    }
+
+}
+
+
+module.exports = { checkMissingParams, checkLogin, isAdmin };
