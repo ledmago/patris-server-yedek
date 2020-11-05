@@ -19,18 +19,11 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use('/api/registerUser', require('./routes/RegisterUser'));
 app.use('/api/logout', require('./routes/LogOut'));
 app.use('/api/login', require('./routes/Login'));
+app.use('/api/adminlogin', require('./routes/AdminLogin'));
 // -- ROUTES END -- //
 
 
 
-// SOCKET EMBEDDING //
-
-const socketInit = require('./socket/index.js');
-app.get('/', function (req, res) {
-    res.sendFile(__dirname + '/Socket/html/index.html');
-});
-socketInit(server);
-// SOCKET EMBEDDING CLOSE // 
 
 
 

@@ -1,8 +1,6 @@
 {
     "0": "Something went wrong",
     "1": "The parameter is missing",
-    "2": "The username is not valid, it should be between 2 and 20 characters.",
-    "3": "The username is not valid",
     "4": "The first name is not valid, it should be between 2 and 20 characters.",
     "5": "The first is not valid",
     "6": "The last name is not valid, it should be between 2 and 20 characters.",
