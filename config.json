@@ -1,0 +1,4 @@
+{
+    "DBuri": "mongodb+srv://poll:VvVbBXm2j942xCaY@cluster0.cgefw.mongodb.net/poll?retryWrites=true&w=majority",
+    "privateKey": "secretKey00009"
+}
