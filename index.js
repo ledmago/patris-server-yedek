@@ -25,9 +25,14 @@ app.use('/api/login', require('./routes/Login'));
 app.use('/api/adminlogin', require('./routes/Admin/AdminLogin'));
 app.use('/api/addcategory', require('./routes/Admin/AddCategory'));
 app.use('/api/getcategory', require('./routes/Admin/GetCategory'));
-app.use('/api/getallcategories', require('./routes/Admin/GetAllCategories'));
+app.use('/api/getallcategories', require('./routes/Admin/GetAllVideos'));
 app.use('/api/updatecategory', require('./routes/Admin/UpdateCategory'));
 app.use('/api/deletecategory', require('./routes/Admin/DeleteCategory'));
+app.use('/api/addvideo', require('./routes/Admin/AddVideo'));
+app.use('/api/getvideo', require('./routes/Admin/GetVideo'));
+app.use('/api/getallvideos', require('./routes/Admin/GetAllVideos'));
+app.use('/api/updatevideo', require('./routes/Admin/UpdateVideo'));
+app.use('/api/deletevideo', require('./routes/Admin/DeleteVideo'));
 // -- ROUTES END -- //
 
 

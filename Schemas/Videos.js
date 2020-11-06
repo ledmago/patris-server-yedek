@@ -7,6 +7,7 @@ const videoSchema = new Schema({
     categoryId: { type: String, required: true },
     title: { type: String, required: true },
     videoSource: { type: String, required: true },
+    order: { type: Number, required: true, default: 1 },
 
 });
 
