@@ -33,6 +33,7 @@ app.use('/api/getvideo', require('./routes/Admin/GetVideo'));
 app.use('/api/getallvideos', require('./routes/Admin/GetAllVideos'));
 app.use('/api/updatevideo', require('./routes/Admin/UpdateVideo'));
 app.use('/api/deletevideo', require('./routes/Admin/DeleteVideo'));
+app.use('/api/addadmin', require('./routes/Admin/AddAdmin'));
 // -- ROUTES END -- //
 
 

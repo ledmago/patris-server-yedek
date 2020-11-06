@@ -1,6 +1,4 @@
 const { param } = require('../routes/RegisterUser');
-const User = require('../Schemas/User');
-const Admins = require('../Schemas/Admins');
 var validator = require('validator');
 const errorHandler = require('./ErrorHandler');
 const { isAdmin, checkLogin, checkMissingParams } = require('./General');
@@ -11,6 +9,7 @@ const { request } = require('express');
 const Category = require("../Schemas/Category");
 const Video = require('../Schemas/Videos');
 const VideoPart = require('../Schemas/VideoParts');
+const Admins = require('../Schemas/Admins');
 const { findById } = require('../Schemas/User');
 const adminLogin = async (req, res) => {
 
@@ -322,9 +321,24 @@ const deleteVideoPart = async (req, res) => {
     }
 }
 
+const addAdmin = async (req, res) => {
+    if (isAdmin(req)) { // Admin ise
+        const params = ['email', 'password', 'firstName', 'lastName'];
+        if (!checkMissingParams(params, req, res)) return;
+        const { email, password, firstName, lastName } = req.body;
+        const addAdmin = new Admins({
+            email,
+            hash: bcrypt.hashSync(password, 12),
+            firstName,
+            lastName
+        });
+        await addVideoPart.save();
+        res.status(200).send({ message: "video part added" })
 
+    }
+}
 
 
 
 // Video Part İşlemleri End
-module.exports = { adminLogin, addCategory, getCategory, getAllCategories, updateCategory, deleteCategory, addVideo, getVideo, getAllVideos, updateVideo, deleteVideo, addVideoPart, getVideoPart, getAllVideoParts, updateVideoPart, deleteVideoPart }
+module.exports = { adminLogin, addCategory, getCategory, getAllCategories, updateCategory, deleteCategory, addVideo, getVideo, getAllVideos, updateVideo, deleteVideo, addVideoPart, getVideoPart, getAllVideoParts, updateVideoPart, deleteVideoPart, addAdmin }
