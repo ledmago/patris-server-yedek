@@ -5,7 +5,7 @@ mongoose.set('useCreateIndex', true);
 const Schema = mongoose.Schema;
 const categorySchema = new Schema({
     categoryName: { type: String, required: true },
-    order: { type: Number, required: true, default: 0 },
+    categoryNumber: { type: Number, required: true, default: 0 },
 
 });
 

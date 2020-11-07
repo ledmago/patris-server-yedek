@@ -11,9 +11,20 @@ app.use(cookieParser());
 connectDB();
 app.use(express.json({ extended: false }));
 app.use(bodyParser.urlencoded({ extended: false }))
+app.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
 // ---------------------------------------- //
 
 
+app.use((req, res, next) => {
+    if (req.body.token) {
+        req.cookies.token = req.body.token;
+    }
+    next();
+})
 // -- ROUTES -- //
 // USER
 app.use('/api/registerUser', require('./routes/RegisterUser'));
@@ -25,7 +36,7 @@ app.use('/api/login', require('./routes/Login'));
 app.use('/api/adminlogin', require('./routes/Admin/AdminLogin'));
 app.use('/api/addcategory', require('./routes/Admin/AddCategory'));
 app.use('/api/getcategory', require('./routes/Admin/GetCategory'));
-app.use('/api/getallcategories', require('./routes/Admin/GetAllVideos'));
+app.use('/api/getallcategories', require('./routes/Admin/GetAllCategories'));
 app.use('/api/updatecategory', require('./routes/Admin/UpdateCategory'));
 app.use('/api/deletecategory', require('./routes/Admin/DeleteCategory'));
 app.use('/api/addvideo', require('./routes/Admin/AddVideo'));

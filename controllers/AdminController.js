@@ -15,6 +15,7 @@ const adminLogin = async (req, res) => {
 
 
     if (await checkLogin(req) == false) {
+
         const { email, password } = req.body;
         const userByEmail = await Admins.findOne({ email });
         if (userByEmail) {
@@ -50,12 +51,12 @@ const adminLogin = async (req, res) => {
 
 const addCategory = async (req, res) => {
     if (isAdmin(req)) { // Admin ise
-        const params = ['categoryName', 'order'];
+        const params = ['categoryName', 'categoryNumber'];
         if (!checkMissingParams(params, req, res)) return;
-        const { categoryName, order } = req.body;
+        const { categoryName, categoryNumber } = req.body;
         const addCategory = new Category({
             categoryName,
-            order
+            categoryNumber
         });
         await addCategory.save();
         res.status(200).send({ message: "category added" })
@@ -94,13 +95,13 @@ const getAllCategories = async (req, res) => {
 const updateCategory = async (req, res) => {
     try {
         if (isAdmin(req)) { // Admin ise
-            const params = ['categoryId', 'categoryName'];
+            const params = ['categoryId', 'categoryName', 'categoryNumber'];
             if (!checkMissingParams(params, req, res)) return;
-            const { categoryId, categoryName, order } = req.body;
+            const { categoryId, categoryName, categoryNumber } = req.body;
             const category = await Category.findById(categoryId)
             await category.updateOne({
                 categoryName,
-                order
+                categoryNumber
             })
             res.status(200).send({ message: 'updated' })
         }
