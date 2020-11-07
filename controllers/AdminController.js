@@ -84,6 +84,8 @@ const getAllCategories = async (req, res) => {
         if (isAdmin(req)) { // Admin ise
             // No need any parameters
             const category = await Category.find()
+
+            category.sort((a, b) => (a.categoryNumber > b.categoryNumber) ? 1 : ((b.categoryNumber > a.categoryNumber) ? -1 : 0));
             res.status(200).send({ data: category })
         }
     }
@@ -103,6 +105,9 @@ const updateCategory = async (req, res) => {
                 categoryName,
                 categoryNumber
             })
+
+
+
             res.status(200).send({ message: 'updated' })
         }
     }
@@ -180,6 +185,7 @@ const getAllVideos = async (req, res) => {
         if (isAdmin(req)) { // Admin ise
             // No need any parameters
             const video = await Video.find()
+            video.sort((a, b) => (a.videoNumber > b.videoNumber) ? 1 : ((b.videoNumber > a.videoNumber) ? -1 : 0));
             res.status(200).send({ data: video })
         }
     }
