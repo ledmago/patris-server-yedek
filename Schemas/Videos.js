@@ -5,9 +5,9 @@ mongoose.set('useCreateIndex', true);
 const Schema = mongoose.Schema;
 const videoSchema = new Schema({
     categoryId: { type: String, required: true },
-    title: { type: String, required: true },
+    videoName: { type: String, required: true },
     videoSource: { type: String, required: true },
-    order: { type: Number, required: true, default: 1 },
+    videoNumber: { type: Number, required: true, default: 1 },
 
 });
 

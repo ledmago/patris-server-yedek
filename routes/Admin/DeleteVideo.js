@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const route = express.Router();
 const { deleteVideo } = require('../../controllers/AdminController');
 
-route.get('/', async (req, res) => {
+route.post('/', async (req, res) => {
     deleteVideo(req, res);
 });
 

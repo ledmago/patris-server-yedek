@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const route = express.Router();
 const { registerUser } = require('../controllers/UserController');
 
-route.get('/', async (req, res) => {
+route.post('/', async (req, res) => {
     // try {
     await registerUser(req, res);
     // }

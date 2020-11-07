@@ -150,13 +150,13 @@ const deleteCategory = async (req, res) => {
 
 const addVideo = async (req, res) => {
     if (isAdmin(req)) { // Admin ise
-        const params = ['categoryId', 'order', 'title', 'videoSource'];
+        const params = ['categoryId', 'videoNumber', 'videoName', 'videoSource'];
         if (!checkMissingParams(params, req, res)) return;
-        const { categoryId, title, order } = req.body;
+        const { categoryId, videoNumber, videoName, videoSource } = req.body;
         const addVideo = new Video({
-            title,
+            videoName,
             categoryId,
-            order,
+            videoNumber,
             videoSource
         });
         await addVideo.save();
@@ -171,7 +171,7 @@ const getVideo = async (req, res) => {
             const params = ['videoId'];
             if (!checkMissingParams(params, req, res)) return;
             const { videoId } = req.body;
-            const video = await Category.findById(videoId)
+            const video = await Video.findById(videoId)
             res.status(200).send({ video })
         }
     }
@@ -183,8 +183,11 @@ const getVideo = async (req, res) => {
 const getAllVideos = async (req, res) => {
     try {
         if (isAdmin(req)) { // Admin ise
-            // No need any parameters
-            const video = await Video.find()
+
+            const params = ['categoryId'];
+            const { categoryId } = req.body;
+
+            const video = await Video.find({ categoryId: categoryId })
             video.sort((a, b) => (a.videoNumber > b.videoNumber) ? 1 : ((b.videoNumber > a.videoNumber) ? -1 : 0));
             res.status(200).send({ data: video })
         }
@@ -197,14 +200,16 @@ const getAllVideos = async (req, res) => {
 const updateVideo = async (req, res) => {
     try {
         if (isAdmin(req)) { // Admin ise
-            const params = ['videoId', 'categoryId', 'title', 'order', 'videoSource'];
-            if (!checkMissingParams(params, req, res)) return;
-            const { videoId, categoryId, title, order, videoSource } = req.body;
-            const video = await Category.findById(videoId)
+            const params = ['videoId', 'categoryId', 'videoName', 'videoNumber', 'videoSource'];
+            // if (!checkMissingParams(params, req, res)) return;
+            const { videoId, categoryId, videoName, videoNumber, videoSource } = req.body;
+
+            const video = await Video.findById(videoId)
+
             await video.updateOne({
                 categoryId,
-                order,
-                title,
+                videoNumber,
+                videoName,
                 videoSource
 
             })
@@ -213,7 +218,8 @@ const updateVideo = async (req, res) => {
     }
     catch (e) {
         console.log(e)
-        new errorHandler(res, 500, 0)
+        // new errorHandler(res, 500, 0)
+        res.status(500).send({ error: 'error' })
     }
 }
 
@@ -221,9 +227,9 @@ const deleteVideo = async (req, res) => {
     try {
         if (isAdmin(req)) { // Admin ise
             const params = ['videoId'];
-            if (!checkMissingParams(params, req, res)) return;
+            // if (!checkMissingParams(params, req, res)) return;
             const { videoId } = req.body;
-            const video = await Category.findById(videoId)
+            const video = await Video.findById(videoId)
             await video.deleteOne()
             res.status(200).send({ message: 'deleted' })
         }
