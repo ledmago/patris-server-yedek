@@ -42,9 +42,14 @@ app.use('/api/deletecategory', require('./routes/Admin/DeleteCategory'));
 app.use('/api/addvideo', require('./routes/Admin/AddVideo'));
 app.use('/api/getvideo', require('./routes/Admin/GetVideo'));
 app.use('/api/getallvideos', require('./routes/Admin/GetAllVideos'));
+app.use('/api/getallvideoparts', require('./routes/Admin/GetAllVideoParts'));
 app.use('/api/updatevideo', require('./routes/Admin/UpdateVideo'));
 app.use('/api/deletevideo', require('./routes/Admin/DeleteVideo'));
 app.use('/api/addadmin', require('./routes/Admin/AddAdmin'));
+app.use('/api/updatevideopart', require('./routes/Admin/UpdateVideoPart'));
+app.use('/api/addvideopart', require('./routes/Admin/AddVideoPart'));
+app.use('/api/deletevideopart', require('./routes/Admin/DeleteVideoPart'));
+
 // -- ROUTES END -- //
 
 

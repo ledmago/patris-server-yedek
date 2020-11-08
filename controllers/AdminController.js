@@ -255,7 +255,7 @@ const deleteVideo = async (req, res) => {
 const addVideoPart = async (req, res) => {
     if (isAdmin(req)) { // Admin ise
         const params = ['videoId', 'minute', 'text'];
-        if (!checkMissingParams(params, req, res)) return;
+        // if (!checkMissingParams(params, req, res)) return;
         const { videoId, minute, text } = req.body;
         const addVideoPart = new VideoPart({
             videoId,
@@ -287,7 +287,8 @@ const getAllVideoParts = async (req, res) => {
     try {
         if (isAdmin(req)) { // Admin ise
             // No need any parameters
-            const videoPart = await VideoPart.find()
+            const { videoId } = req.body;
+            const videoPart = await VideoPart.find({ videoId: videoId })
             res.status(200).send({ data: videoPart })
         }
     }
@@ -300,11 +301,10 @@ const updateVideoPart = async (req, res) => {
     try {
         if (isAdmin(req)) { // Admin ise
             const params = ['videoPartId', 'videoId', 'minute', 'text'];
-            if (!checkMissingParams(params, req, res)) return;
-            const { videoPartId, videoId, minute, text } = req.body;
-            const video = await Category.findById(videoPartId)
+            // if (!checkMissingParams(params, req, res)) return;
+            const { videoPartId, minute, text } = req.body;
+            const video = await VideoPart.findById(videoPartId)
             await video.updateOne({
-                videoId,
                 minute,
                 text
 
@@ -321,10 +321,10 @@ const updateVideoPart = async (req, res) => {
 const deleteVideoPart = async (req, res) => {
     try {
         if (isAdmin(req)) { // Admin ise
-            const params = ['videoId'];
-            if (!checkMissingParams(params, req, res)) return;
+            const params = ['videoPartId'];
+            // if (!checkMissingParams(params, req, res)) return;
             const { videoPartId } = req.body;
-            const videoPart = await Category.findById(videoPartId)
+            const videoPart = await VideoPart.findById(videoPartId)
             await videoPart.deleteOne()
             res.status(200).send({ message: 'deleted' })
         }
