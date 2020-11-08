@@ -337,7 +337,7 @@ const deleteVideoPart = async (req, res) => {
 const addAdmin = async (req, res) => {
     if (isAdmin(req)) { // Admin ise
         const params = ['email', 'password', 'firstName', 'lastName'];
-        if (!checkMissingParams(params, req, res)) return;
+        // if (!checkMissingParams(params, req, res)) return;
         const { email, password, firstName, lastName } = req.body;
         const addAdmin = new Admins({
             email,
@@ -345,13 +345,61 @@ const addAdmin = async (req, res) => {
             firstName,
             lastName
         });
-        await addVideoPart.save();
+        await addAdmin.save();
         res.status(200).send({ message: "video part added" })
 
+    }
+}
+
+const getAllAdmins = async (req, res) => {
+    try {
+        if (isAdmin(req)) { // Admin ise
+            // No need any parameters
+            const admin = await Admins.find()
+
+            // category.sort((a, b) => (a.categoryNumber > b.categoryNumber) ? 1 : ((b.categoryNumber > a.categoryNumber) ? -1 : 0));
+            res.status(200).send({ data: admin })
+        }
+    }
+    catch (e) {
+        new errorHandler(res, 500, 0)
+    }
+}
+
+const updateAdmin = async (req, res) => {
+    if (isAdmin(req)) { // Admin ise
+
+        // if (!checkMissingParams(params, req, res)) return;
+        const { adminId, email, firstName, lastName } = req.body;
+        console.log({ adminId, email, firstName, lastName })
+        const addAdmin = Admins.findById(adminId)
+        console.log()
+        await addAdmin.updateOne({
+            email,
+            firstName,
+            lastName
+        });
+        res.status(200).send({ message: "video part added" })
+
+    }
+}
+
+const deleteAdmin = async (req, res) => {
+    try {
+        if (isAdmin(req)) { // Admin ise
+
+            const { adminId } = req.body;
+            const admin = await Admins.findById(adminId)
+            await admin.deleteOne()
+            res.status(200).send({ message: 'deleted' })
+        }
+    }
+    catch (e) {
+        new errorHandler(res, 500, 0)
     }
 }
 
 
 
 // Video Part İşlemleri End
-module.exports = { adminLogin, addCategory, getCategory, getAllCategories, updateCategory, deleteCategory, addVideo, getVideo, getAllVideos, updateVideo, deleteVideo, addVideoPart, getVideoPart, getAllVideoParts, updateVideoPart, deleteVideoPart, addAdmin }
+module.exports = { adminLogin, addCategory, getCategory, getAllCategories, updateCategory, deleteCategory, addVideo, getVideo, getAllVideos, updateVideo, deleteVideo, addVideoPart, getVideoPart, getAllVideoParts, updateVideoPart, deleteVideoPart, addAdmin, getAllAdmins, updateAdmin, deleteAdmin }

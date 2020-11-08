@@ -49,6 +49,9 @@ app.use('/api/addadmin', require('./routes/Admin/AddAdmin'));
 app.use('/api/updatevideopart', require('./routes/Admin/UpdateVideoPart'));
 app.use('/api/addvideopart', require('./routes/Admin/AddVideoPart'));
 app.use('/api/deletevideopart', require('./routes/Admin/DeleteVideoPart'));
+app.use('/api/getalladmins', require('./routes/Admin/GetAllAdmins'));
+app.use('/api/updateadmin', require('./routes/Admin/UpdateAdmin'));
+app.use('/api/deleteadmin', require('./routes/Admin/DeleteAdmin'));
 
 // -- ROUTES END -- //
 
