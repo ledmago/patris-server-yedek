@@ -27,7 +27,7 @@ app.use((req, res, next) => {
 })
 // -- ROUTES -- //
 // USER
-app.use('/api/registerUser', require('./routes/RegisterUser'));
+app.use('/api/registeruser', require('./routes/RegisterUser'));
 app.use('/api/logout', require('./routes/LogOut'));
 app.use('/api/login', require('./routes/Login'));
 
