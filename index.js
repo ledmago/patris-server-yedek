@@ -20,11 +20,15 @@ app.use(function (req, res, next) {
 
 
 app.use((req, res, next) => {
+
+    req.body = { ...req.body, ...req.query }
     if (req.body.token) {
         req.cookies.token = req.body.token;
     }
     next();
 })
+
+
 // -- ROUTES -- //
 // USER
 app.use('/api/registeruser', require('./routes/RegisterUser'));
