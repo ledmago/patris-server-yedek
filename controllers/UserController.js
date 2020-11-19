@@ -8,7 +8,9 @@ const bcrypt = require('bcryptjs');
 const config = require('../config.json');
 var jwt = require('jsonwebtoken');
 const { request } = require('express');
-
+const Category = require("../Schemas/Category");
+const Video = require('../Schemas/Videos');
+const VideoPart = require('../Schemas/VideoParts');
 
 function firstNameValidator(firstName, res) {
     const length = validator.isByteLength(firstName, { min: 2, max: 20 }) // length should be between 4 and 10
@@ -161,4 +163,101 @@ const login = async (req, res) => {
 };
 
 
-module.exports = { registerUser, logOut, login };
+const getVideo = async (req, res) => {
+    try {
+
+        const params = ['videoId'];
+        if (!checkMissingParams(params, req, res)) return;
+        const { videoId } = req.body;
+        const video = await Video.findById(videoId)
+        res.status(200).send({ video })
+
+    }
+    catch (e) {
+        new errorHandler(res, 500, 0)
+    }
+}
+
+const getAllVideos = async (req, res) => {
+    try {
+        if (await checkLogin(req)) {
+            const params = ['categoryId'];
+            const { categoryId } = req.body;
+            const video = await Video.find({ categoryId: categoryId })
+            video.sort((a, b) => (a.videoNumber > b.videoNumber) ? 1 : ((b.videoNumber > a.videoNumber) ? -1 : 0));
+            res.status(200).send({ data: video })
+        }
+        else {
+            new errorHandler(res, 500, 0)
+        }
+
+
+    }
+    catch (e) {
+        new errorHandler(res, 500, 0)
+    }
+}
+
+
+const getCategory = async (req, res) => {
+    try {
+        if (await checkLogin(req)) { // Admin ise
+            const params = ['categoryId'];
+            if (!checkMissingParams(params, req, res)) return;
+            const { categoryId } = req.body;
+            const category = await Category.findById(categoryId)
+            res.status(200).send({ category })
+        }
+    }
+    catch (e) {
+        new errorHandler(res, 500, 0)
+    }
+}
+
+const getAllCategories = async (req, res) => {
+    try {
+        if (await checkLogin(req)) { // Admin ise
+            // No need any parameters
+            const category = await Category.find()
+
+            category.sort((a, b) => (a.categoryNumber > b.categoryNumber) ? 1 : ((b.categoryNumber > a.categoryNumber) ? -1 : 0));
+            res.status(200).send({ data: category })
+        }
+    }
+    catch (e) {
+        new errorHandler(res, 500, 0)
+    }
+}
+
+
+const getVideoPart = async (req, res) => {
+    try {
+        if (await checkLogin(req)) { // Admin ise
+            const params = ['videoPartId'];
+            if (!checkMissingParams(params, req, res)) return;
+            const { videoPartId } = req.body;
+            const videoPart = await VideoPart.findById(videoPartId)
+            res.status(200).send({ videoPart })
+        }
+    }
+    catch (e) {
+        new errorHandler(res, 500, 0)
+    }
+}
+
+const getAllVideoParts = async (req, res) => {
+    try {
+        if (await checkLogin(req)) { // Admin ise
+            // No need any parameters
+            const { videoId } = req.body;
+            const videoPart = await VideoPart.find({ videoId: videoId })
+            res.status(200).send({ data: videoPart })
+        }
+    }
+    catch (e) {
+        new errorHandler(res, 500, 0)
+    }
+}
+
+
+module.exports = { registerUser, logOut, login, getVideo, getAllVideos, getCategory, getAllCategories, getAllVideoParts, getVideoPart };
