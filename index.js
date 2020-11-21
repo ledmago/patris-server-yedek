@@ -26,6 +26,7 @@ app.use((req, res, next) => {
         req.cookies.token = req.body.token;
     }
     next();
+
 })
 
 
@@ -33,6 +34,7 @@ app.use((req, res, next) => {
 // USER
 app.use('/api/registeruser', require('./routes/RegisterUser'));
 app.use('/api/logout', require('./routes/LogOut'));
+app.use('/api/refreshToken', require('./routes/RefreshToken'));
 app.use('/api/login', require('./routes/Login'));
 app.use('/api/user/getvideo', require('./routes/GetVideos'));
 app.use('/api/user/getallvideos', require('./routes/GetAllVideos'));

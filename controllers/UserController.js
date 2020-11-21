@@ -130,7 +130,31 @@ const logOut = (req, res) => {
     res.clearCookie('token');
     res.status(202).send({ message: 'Log Outed Successfully' })
 };
+const refreshToken = async (req, res) => {
+    try {
+        const token = req.body.token;
 
+        if (token) {
+            var result = jwt.verify(token, config.privateKey);
+            const user = await User.findOne({ userName: result.userName })
+
+            if (user) {
+                res.cookie('token', token);
+                res.status(200).send({ user: user })
+            }
+            else {
+                new errorHandler(res, 500, 0)
+            }
+        }
+        else {
+            new errorHandler(res, 500, 0)
+        }
+    }
+    catch (e) {
+        new errorHandler(res, 500, 0)
+    }
+
+}
 const login = async (req, res) => {
 
 
@@ -260,4 +284,4 @@ const getAllVideoParts = async (req, res) => {
 }
 
 
-module.exports = { registerUser, logOut, login, getVideo, getAllVideos, getCategory, getAllCategories, getAllVideoParts, getVideoPart };
+module.exports = { registerUser, logOut, login, getVideo, getAllVideos, getCategory, getAllCategories, getAllVideoParts, getVideoPart, refreshToken };
