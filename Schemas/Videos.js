@@ -8,6 +8,8 @@ const videoSchema = new Schema({
     videoName: { type: String, required: true },
     videoSource: { type: String, required: true },
     videoNumber: { type: Number, required: true, default: 1 },
+    duration: { type: Number, required: false },
+    thumb: { type: Object, required: false },
 
 });
 

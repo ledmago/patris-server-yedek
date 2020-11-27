@@ -11,6 +11,8 @@ const Video = require('../Schemas/Videos');
 const VideoPart = require('../Schemas/VideoParts');
 const Admins = require('../Schemas/Admins');
 const { findById } = require('../Schemas/User');
+const Axios = require('axios');
+
 const adminLogin = async (req, res) => {
 
 
@@ -153,14 +155,51 @@ const addVideo = async (req, res) => {
         const params = ['categoryId', 'videoNumber', 'videoName', 'videoSource'];
         if (!checkMissingParams(params, req, res)) return;
         const { categoryId, videoNumber, videoName, videoSource } = req.body;
-        const addVideo = new Video({
-            videoName,
-            categoryId,
-            videoNumber,
-            videoSource
-        });
-        await addVideo.save();
-        res.status(200).send({ message: "video added" })
+
+        let videoId = videoSource.split("/");
+        videoId = videoId[videoId.length - 1];
+
+        Axios.get('https://player.vimeo.com/video/' + videoId).then(async (response) => {
+            let startIndex = response.data.search('"duration":')
+            let lastIndex = response.data.search('"thumbs"')
+            lastIndex = lastIndex - startIndex;
+            let duration = response.data.substr(startIndex + 11, lastIndex - 12)
+
+
+            let startIndex2 = response.data.search('"thumbs":')
+            let lastIndex2 = response.data.search('"owner":')
+            lastIndex2 = lastIndex2 - startIndex2;
+            let thumb = response.data.substr(startIndex2 + 9, lastIndex2 - 10)
+
+            thumb = JSON.parse(thumb)
+
+
+
+            const addVideo = new Video({
+                videoName,
+                categoryId,
+                videoNumber,
+                videoSource,
+                duration,
+                thumb
+            });
+
+
+            await addVideo.save();
+            res.status(200).send({ message: "video added" })
+
+
+        }).catch(error => {
+            new errorHandler(res, 500, 0)
+        })
+
+
+
+
+
+
+
+
 
     }
 }

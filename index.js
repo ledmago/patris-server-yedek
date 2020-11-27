@@ -69,7 +69,4 @@ app.use('/api/deleteadmin', require('./routes/Admin/DeleteAdmin'));
 
 
 
-
-
-
 server.listen(Port, () => console.log('Server started'));
