@@ -54,7 +54,7 @@ const isAdmin = async (req) => {
 
         if (token) {
             var result = jwt.verify(token, config.privateKey);
-            const user = await Admins.findOne({ userName: result.userName })
+            const user = await Admins.findOne({ email: result.email })
 
             if (user && result.type == 'admin') {
                 return true;

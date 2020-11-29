@@ -41,6 +41,7 @@ app.use('/api/user/getallvideos', require('./routes/GetAllVideos'));
 app.use('/api/user/getcategory', require('./routes/GetCategory'));
 app.use('/api/user/getallcategories', require('./routes/GetAllCategories'));
 app.use('/api/user/getallvideoparts', require('./routes/GetAllVideoParts'));
+app.use('/api/user/changeuserprofile', require('./routes/ChangeUserProfile'));
 
 // ADMIN ICIN
 app.use('/api/adminlogin', require('./routes/Admin/AdminLogin'));

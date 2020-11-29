@@ -132,11 +132,12 @@ const logOut = (req, res) => {
 };
 const refreshToken = async (req, res) => {
     try {
-        const token = req.body.token;
+        const token = req.body.token ? req.body.token : req.cookies.token;
 
         if (token) {
             var result = jwt.verify(token, config.privateKey);
-            const user = await User.findOne({ userName: result.userName })
+            const user = await User.findOne({ email: result.email })
+
 
             if (user) {
                 res.cookie('token', token);
@@ -290,5 +291,36 @@ const getAllVideoParts = async (req, res) => {
     }
 }
 
+const changeUserProfile = async (req, res) => {
+    try {
+        if (await checkLogin(req)) { // Admin ise
+            const { firstName, lastName, email, country, university, city, grade, password } = req.body;
 
-module.exports = { registerUser, logOut, login, getVideo, getAllVideos, getCategory, getAllCategories, getAllVideoParts, getVideoPart, refreshToken };
+            const token = req.cookies.token;
+            var userResult = jwt.verify(token, config.privateKey);
+            const user = await User.findOne({ email: userResult.email })
+
+            if (user) {
+
+                if (userResult.email != email) {
+                    const newToken = createJWT(email)
+                    res.cookie('token', newToken); // set token to the cookie
+                    res.status(200).send({ token: newToken, user: user })
+                }
+                await user.updateOne({ firstName, lastName, email, country, university, city, grade, hash: password ? bcrypt.hashSync(password, 12) : user.hash, })
+                res.status(200).send({ message: 'updated' })
+            }
+            else {
+                res.status(500).send({ error: 'error' })
+            }
+
+
+        }
+    }
+    catch (e) {
+        console.log(e)
+        // new errorHandler(res, 500, 0)
+        res.status(500).send({ error: 'error' })
+    }
+}
+module.exports = { changeUserProfile, registerUser, logOut, login, getVideo, getAllVideos, getCategory, getAllCategories, getAllVideoParts, getVideoPart, refreshToken };
