@@ -154,7 +154,7 @@ const addVideo = async (req, res) => {
     if (isAdmin(req)) { // Admin ise
         const params = ['categoryId', 'videoNumber', 'videoName', 'videoSource'];
         if (!checkMissingParams(params, req, res)) return;
-        const { categoryId, videoNumber, videoName, videoSource } = req.body;
+        const { categoryId, videoNumber, videoName, videoSource, freeTrial } = req.body;
 
         let videoId = videoSource.split("/");
         videoId = videoId[videoId.length - 1];
@@ -181,7 +181,8 @@ const addVideo = async (req, res) => {
                 videoNumber,
                 videoSource,
                 duration,
-                thumb
+                thumb,
+                freeTrial
             });
 
 
@@ -239,9 +240,9 @@ const getAllVideos = async (req, res) => {
 const updateVideo = async (req, res) => {
     try {
         if (isAdmin(req)) { // Admin ise
-            const params = ['videoId', 'categoryId', 'videoName', 'videoNumber', 'videoSource'];
+            const params = ['videoId', 'categoryId', 'videoName', 'videoNumber', 'videoSource', 'freeTrial'];
             // if (!checkMissingParams(params, req, res)) return;
-            const { videoId, categoryId, videoName, videoNumber, videoSource } = req.body;
+            const { videoId, categoryId, videoName, videoNumber, videoSource, freeTrial } = req.body;
 
             const video = await Video.findById(videoId)
 
@@ -249,7 +250,8 @@ const updateVideo = async (req, res) => {
                 categoryId,
                 videoNumber,
                 videoName,
-                videoSource
+                videoSource,
+                freeTrial
 
             })
             res.status(200).send({ message: 'updated' })

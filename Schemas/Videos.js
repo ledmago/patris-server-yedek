@@ -10,6 +10,7 @@ const videoSchema = new Schema({
     videoNumber: { type: Number, required: true, default: 1 },
     duration: { type: Number, required: false },
     thumb: { type: Object, required: false },
+    freeTrial: { type: Boolean, required: false, default: false },
 
 });
 

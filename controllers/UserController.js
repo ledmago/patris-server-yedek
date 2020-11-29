@@ -207,15 +207,22 @@ const getAllVideos = async (req, res) => {
         if (await checkLogin(req)) {
             const params = ['categoryId'];
             const { categoryId } = req.body;
-            const video = await Video.find({ categoryId: categoryId })
+            let video = await Video.find({ categoryId: categoryId })
             video.sort((a, b) => (a.videoNumber > b.videoNumber) ? 1 : ((b.videoNumber > a.videoNumber) ? -1 : 0));
+
+            const getuser = await checkLogin(req);
+            if (!getuser.subscription) {
+                video.map((item) => {
+                    item.videoSource = item.freeTrial ? item.videoSource : false;
+
+                    item.thumb = item.freeTrial ? item.thumb : false;
+                })
+            }
             res.status(200).send({ data: video })
         }
         else {
             new errorHandler(res, 500, 0)
         }
-
-
     }
     catch (e) {
         new errorHandler(res, 500, 0)
