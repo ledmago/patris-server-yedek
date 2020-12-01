@@ -43,6 +43,7 @@ app.use('/api/user/getallcategories', require('./routes/GetAllCategories'));
 app.use('/api/user/getallvideoparts', require('./routes/GetAllVideoParts'));
 app.use('/api/user/changeuserprofile', require('./routes/ChangeUserProfile'));
 app.use('/api/user/isusersubscribed', require('./routes/isUserSubscribed'));
+app.use('/api/user/changepassword', require('./routes/ChangePassword'));
 
 // ADMIN ICIN
 app.use('/api/adminlogin', require('./routes/Admin/AdminLogin'));

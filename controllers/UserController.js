@@ -334,6 +334,46 @@ const changeUserProfile = async (req, res) => {
     }
 }
 
+const changePassword = async (req, res) => {
+    // try {
+    if (await checkLogin(req)) { // Admin ise
+        const { oldPassword, newPassword } = req.body;
+
+        const token = req.cookies.token;
+        var userResult = jwt.verify(token, config.privateKey);
+        const user = await User.findOne({ email: userResult.email })
+
+        if (user) {
+            const comparePassword = await bcrypt.compare(oldPassword, user.hash)
+            if (comparePassword) {
+                // if old password was correct
+                const hash = bcrypt.hashSync(newPassword, 12);
+                await user.updateOne({ hash });
+                const newUser = await User.findById(user._id)
+
+                res.status(200).send({ user: newUser })
+            }
+            else {
+                res.status(500).send({ error: "Old password was not correct" })
+            }
+
+
+
+        }
+        else {
+            res.status(500).send({ error: 'error user not found' })
+        }
+
+
+    }
+    // }
+    // catch (e) {
+    //     console.log(e)
+    //     // new errorHandler(res, 500, 0)
+    //     res.status(500).send({ error: 'error', e: e })
+    // }
+}
+
 
 const isUserSubscribed = async (req, res) => {
 
@@ -363,4 +403,4 @@ const isUserSubscribed = async (req, res) => {
 
 }
 
-module.exports = { registerUser, logOut, login, getVideo, getAllVideos, getCategory, getAllCategories, getAllVideoParts, getVideoPart, refreshToken, changeUserProfile, isUserSubscribed };
+module.exports = { registerUser, logOut, login, getVideo, getAllVideos, getCategory, getAllCategories, getAllVideoParts, getVideoPart, refreshToken, changeUserProfile, isUserSubscribed, changePassword };
