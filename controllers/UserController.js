@@ -1,4 +1,4 @@
-const { param } = require('../routes/RegisterUser');
+const { param, use } = require('../routes/RegisterUser');
 const User = require('../Schemas/User');
 const Admins = require('../Schemas/Admins');
 var validator = require('validator');
@@ -294,7 +294,7 @@ const getAllVideoParts = async (req, res) => {
 const changeUserProfile = async (req, res) => {
     try {
         if (await checkLogin(req)) { // Admin ise
-            const { firstName, lastName, email, country, university, city, grade, password } = req.body;
+            const { firstName, lastName, email, country, university, city, grade } = req.body;
 
             const token = req.cookies.token;
             var userResult = jwt.verify(token, config.privateKey);
@@ -302,13 +302,17 @@ const changeUserProfile = async (req, res) => {
 
             if (user) {
 
+                let newToken = token;
                 if (userResult.email != email) {
-                    const newToken = createJWT(email)
+                    newToken = createJWT(email)
                     res.cookie('token', newToken); // set token to the cookie
-                    res.status(200).send({ token: newToken, user: user })
+
                 }
-                await user.updateOne({ firstName, lastName, email, country, university, city, grade, hash: password ? bcrypt.hashSync(password, 12) : user.hash, })
-                res.status(200).send({ message: 'updated' })
+
+                await user.updateOne({ firstName, lastName, email, country, university, city, grade });
+                const newUser = await User.findById(user._id)
+
+                res.status(200).send({ token: newToken, user: newUser })
             }
             else {
                 res.status(500).send({ error: 'error' })
@@ -323,4 +327,34 @@ const changeUserProfile = async (req, res) => {
         res.status(500).send({ error: 'error' })
     }
 }
-module.exports = { changeUserProfile, registerUser, logOut, login, getVideo, getAllVideos, getCategory, getAllCategories, getAllVideoParts, getVideoPart, refreshToken };
+
+
+const isUserSubscribed = async (req, res) => {
+
+    const token = req.cookies.token;
+    if (token) {
+        var userResult = jwt.verify(token, config.privateKey);
+        const user = await User.findOne({ email: userResult.email })
+        if (user) {
+            let subscriptionEndDate = new Date(user.subscriptionEndDate).getTime();
+            let nowDate = new Date().getTime();
+            if (user.subscription && nowDate < subscriptionEndDate) {
+                res.status(200).send({ subscribe: true });
+            }
+            else {
+                res.status(500).send({ subscribe: false });
+            }
+
+        }
+        else {
+            res.status(500).send({ subscribe: false });
+        }
+    }
+    else {
+        res.status(500).send({ subscribe: false });
+    }
+
+
+}
+
+module.exports = { registerUser, logOut, login, getVideo, getAllVideos, getCategory, getAllCategories, getAllVideoParts, getVideoPart, refreshToken, changeUserProfile, isUserSubscribed };
