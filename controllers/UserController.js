@@ -212,11 +212,17 @@ const getAllVideos = async (req, res) => {
             video.sort((a, b) => (a.videoNumber > b.videoNumber) ? 1 : ((b.videoNumber > a.videoNumber) ? -1 : 0));
 
             const getuser = await checkLogin(req);
-            if (!getuser.subscription) {
-                video.map((item) => {
-                    item.videoSource = item.freeTrial ? item.videoSource : false;
+            let subscriptionEndDate = new Date(getuser.subscriptionEndDate).getTime();
+            let nowDate = new Date().getTime();
+            let constraint = getuser.subscription && nowDate < subscriptionEndDate;
 
-                    item.thumb = item.freeTrial ? item.thumb : false;
+            console.log(constraint)
+
+            if (!constraint) {
+                video.map((item) => {
+                    item.videoSource = constraint ? item.videoSource : false;
+
+                    item.thumb = constraint ? item.thumb : false;
                 })
             }
             res.status(200).send({ data: video })
