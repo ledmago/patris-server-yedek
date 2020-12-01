@@ -216,7 +216,6 @@ const getAllVideos = async (req, res) => {
             let nowDate = new Date().getTime();
             let constraint = getuser.subscription && nowDate < subscriptionEndDate;
 
-            console.log(constraint)
 
             if (!constraint) {
                 video.map((item) => {
@@ -342,7 +341,7 @@ const changePassword = async (req, res) => {
         const token = req.cookies.token;
         var userResult = jwt.verify(token, config.privateKey);
         const user = await User.findOne({ email: userResult.email })
-
+        console.log(userResult.email)
         if (user) {
             const comparePassword = await bcrypt.compare(oldPassword, user.hash)
             if (comparePassword) {
