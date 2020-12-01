@@ -44,7 +44,7 @@ app.use('/api/user/getallvideoparts', require('./routes/GetAllVideoParts'));
 app.use('/api/user/changeuserprofile', require('./routes/ChangeUserProfile'));
 app.use('/api/user/isusersubscribed', require('./routes/isUserSubscribed'));
 app.use('/api/user/changepassword', require('./routes/ChangePassword'));
-
+app.use('/api/user/sendmail', require('./routes/SendMail'));
 // ADMIN ICIN
 app.use('/api/adminlogin', require('./routes/Admin/AdminLogin'));
 app.use('/api/addcategory', require('./routes/Admin/AddCategory'));

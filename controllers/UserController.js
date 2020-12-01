@@ -11,6 +11,7 @@ const { request } = require('express');
 const Category = require("../Schemas/Category");
 const Video = require('../Schemas/Videos');
 const VideoPart = require('../Schemas/VideoParts');
+var nodemailer = require('nodemailer');
 
 function firstNameValidator(firstName, res) {
     const length = validator.isByteLength(firstName, { min: 2, max: 20 }) // length should be between 4 and 10
@@ -341,7 +342,6 @@ const changePassword = async (req, res) => {
         const token = req.cookies.token;
         var userResult = jwt.verify(token, config.privateKey);
         const user = await User.findOne({ email: userResult.email })
-        console.log(userResult.email)
         if (user) {
             const comparePassword = await bcrypt.compare(oldPassword, user.hash)
             if (comparePassword) {
@@ -402,4 +402,73 @@ const isUserSubscribed = async (req, res) => {
 
 }
 
-module.exports = { registerUser, logOut, login, getVideo, getAllVideos, getCategory, getAllCategories, getAllVideoParts, getVideoPart, refreshToken, changeUserProfile, isUserSubscribed, changePassword };
+const sendMail = async (req, res) => {
+    const { email, title, content } = req.body;
+    const mailjet = require('node-mailjet')
+        .connect('f1eea4906be660d06590659d8f738d71', '21e8ad4bf8a2eff76dd2f34169ea7ed9')
+    const request = mailjet
+        .post("send", { 'version': 'v3.1' })
+        .request({
+            "Messages": [
+                {
+                    "From": {
+                        "Email": "maze.software.mail.sender@gmail.com",
+                        "Name": "Maze"
+                    },
+                    "To": [
+                        {
+                            "Email": "ledmago@gmail.com",
+                            "Name": "Maze Software Mail Sender : Dr. Patris"
+                        }
+                    ],
+                    "Subject": "Kullanıcınız Yeni Mesajınız Var",
+                    "TextPart": "Kullanıcıdan yeni mseajınız var",
+                    "HTMLPart": "<strong> Email: </strong>" + email + " adlı kullanıcıdan mesaj var. <br><strong> Title: </strong>" + title + "<br> <strong> Message: </strong>" + content
+                }
+            ]
+        })
+    request
+        .then((result) => {
+            console.log(result.body)
+            res.send("ok")
+        })
+        .catch((err) => {
+            res.send("fail")
+            console.log(err.statusCode)
+        })
+
+
+
+    // const { email, title, content } = req.body;
+    // var mail = nodemailer.createTransport({
+    //     host: "in-v3.mailjet.com",
+    //     port: 587,
+    //     secure: false, // upgrade later with STARTTLS
+    //     auth: {
+    //         user: "in-v3.mailjet.com",
+    //         pass: "c3030f9e41dece90339d67a5be03bf99"
+    //     }
+    // });
+
+    // var mailOptions = {
+    //     from: 'ledmago@gmail.com',
+    //     to: 'ledmago@gmail.com',
+    //     subject: 'Sending Email via Node.js',
+    //     text: 'That was easy!'
+    // };
+
+    // mail.sendMail(mailOptions, function (error, info) {
+    //     if (error) {
+    //         console.log(error);
+    //         res.send(error)
+    //     } else {
+    //         res.send(info.response)
+    //         console.log('Email sent: ' + info.response);
+    //     }
+    // });
+
+
+
+}
+
+module.exports = { registerUser, logOut, login, getVideo, getAllVideos, getCategory, getAllCategories, getAllVideoParts, getVideoPart, refreshToken, changeUserProfile, isUserSubscribed, changePassword, sendMail };
