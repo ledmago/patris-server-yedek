@@ -220,7 +220,7 @@ const getAllVideos = async (req, res) => {
 
             if (!constraint) {
                 video.map((item) => {
-                    item.videoSource = constraint ? item.videoSource : false;
+                    item.videoSource = !constraint && !item.freeTrial ? false : item.videoSource;
 
                     // item.thumb = constraint ? item.thumb : false;
                 })
