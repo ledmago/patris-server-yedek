@@ -543,7 +543,6 @@ const watchedInfo = async (req, res) => {
             const user = await checkLogin(req)
 
             const { videoId, timeOfWatched, isComplated } = req.body;
-            console.log(videoId, timeOfWatched, isComplated)
             const schema = {
                 userId: user._id,
                 videoId,
