@@ -45,6 +45,7 @@ app.use('/api/user/changeuserprofile', require('./routes/ChangeUserProfile'));
 app.use('/api/user/isusersubscribed', require('./routes/isUserSubscribed'));
 app.use('/api/user/changepassword', require('./routes/ChangePassword'));
 app.use('/api/user/sendmail', require('./routes/SendMail'));
+app.use('/api/user/forgetpassword', require('./routes/ForgetPassword'));
 // ADMIN ICIN
 app.use('/api/adminlogin', require('./routes/Admin/AdminLogin'));
 app.use('/api/addcategory', require('./routes/Admin/AddCategory'));

@@ -222,7 +222,7 @@ const getAllVideos = async (req, res) => {
                 video.map((item) => {
                     item.videoSource = constraint ? item.videoSource : false;
 
-                    item.thumb = constraint ? item.thumb : false;
+                    // item.thumb = constraint ? item.thumb : false;
                 })
             }
             res.status(200).send({ data: video })
@@ -471,4 +471,68 @@ const sendMail = async (req, res) => {
 
 }
 
-module.exports = { registerUser, logOut, login, getVideo, getAllVideos, getCategory, getAllCategories, getAllVideoParts, getVideoPart, refreshToken, changeUserProfile, isUserSubscribed, changePassword, sendMail };
+const forgetPassword = async (req, res) => {
+    const { email } = req.body;
+    const newPassword = generateRandomPassword(10);
+
+
+    const user = await User.findOne({ email: email });
+    await user.updateOne({ hash: bcrypt.hashSync(newPassword, 12) })
+
+    if (user) {
+
+
+        const mailjet = require('node-mailjet')
+            .connect('f1eea4906be660d06590659d8f738d71', '21e8ad4bf8a2eff76dd2f34169ea7ed9')
+        const request = mailjet
+            .post("send", { 'version': 'v3.1' })
+            .request({
+                "Messages": [
+                    {
+                        "From": {
+                            "Email": "maze.software.mail.sender@gmail.com",
+                            "Name": "Maze"
+                        },
+                        "To": [
+                            {
+                                "Email": email,
+                                "Name": "Dr. Patris Lectures"
+                            }
+                        ],
+                        "Subject": "Change Password Request",
+                        "TextPart": "You have requested new password",
+                        "HTMLPart": "<br><br><strong> Your new password: </strong>" + newPassword
+                    }
+                ]
+            })
+        request
+            .then((result) => {
+                console.log(result.body)
+                res.send("ok")
+            })
+            .catch((err) => {
+                res.send("fail")
+                console.log(err.statusCode)
+            })
+
+    }
+
+
+
+
+
+
+}
+
+function generateRandomPassword(length) {
+    var result = '';
+    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for (var i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+}
+
+
+module.exports = { forgetPassword, registerUser, logOut, login, getVideo, getAllVideos, getCategory, getAllCategories, getAllVideoParts, getVideoPart, refreshToken, changeUserProfile, isUserSubscribed, changePassword, sendMail };
