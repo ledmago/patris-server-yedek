@@ -11,7 +11,10 @@ const { request } = require('express');
 const Category = require("../Schemas/Category");
 const Video = require('../Schemas/Videos');
 const VideoPart = require('../Schemas/VideoParts');
+const WatchedInfo = require('../Schemas/WatchedInfo');
 var nodemailer = require('nodemailer');
+const ErrorHandler = require('./ErrorHandler');
+const { schema } = require('../Schemas/User');
 
 function firstNameValidator(firstName, res) {
     const length = validator.isByteLength(firstName, { min: 2, max: 20 }) // length should be between 4 and 10
@@ -534,5 +537,66 @@ function generateRandomPassword(length) {
     return result;
 }
 
+const watchedInfo = async (req, res) => {
+    try {
+        if (await checkLogin(req)) {
+            const user = await checkLogin(req)
 
-module.exports = { forgetPassword, registerUser, logOut, login, getVideo, getAllVideos, getCategory, getAllCategories, getAllVideoParts, getVideoPart, refreshToken, changeUserProfile, isUserSubscribed, changePassword, sendMail };
+            const { videoId, timeOfWatched, isComplated } = req.body;
+            console.log(videoId, timeOfWatched, isComplated)
+            const schema = {
+                userId: user._id,
+                videoId,
+                timeOfWatched,
+
+            };
+            if (isComplated) { schema.isComplated = isComplated }
+
+
+            const updateIfAldready = await WatchedInfo.findOne({ userId: user._id, videoId: videoId });
+
+            if (updateIfAldready) {
+                await WatchedInfo.updateOne({ userId: user._id, videoId: videoId }, schema);
+                res.status(200).send({ message: "ok" })
+            }
+            else {
+                const newWatchInfo = new WatchedInfo(schema);
+                await newWatchInfo.save();
+                res.status(200).send({ message: "ok" })
+            }
+
+
+        }
+        else {
+            new errorHandler(res, 500, 0);
+        }
+    }
+    catch (e) {
+        new errorHandler(res, 500, 1);
+        console.log(e)
+    }
+}
+
+const getWatchedInfo = async (req, res) => {
+    try {
+        if (await checkLogin(req)) {
+            const user = await checkLogin(req)
+
+            const infoList = await WatchedInfo.find({ userId: user._id });
+
+            res.send({ data: infoList })
+
+        }
+        else {
+            new errorHandler(res, 500, 0);
+        }
+    }
+    catch (e) {
+        new errorHandler(res, 500, 1);
+        console.log(e)
+    }
+}
+
+
+
+module.exports = { registerUser, logOut, login, getVideo, getAllVideos, getCategory, getAllCategories, getAllVideoParts, getVideoPart, refreshToken, changeUserProfile, isUserSubscribed, changePassword, sendMail, forgetPassword, watchedInfo, getWatchedInfo };

@@ -46,6 +46,10 @@ app.use('/api/user/isusersubscribed', require('./routes/isUserSubscribed'));
 app.use('/api/user/changepassword', require('./routes/ChangePassword'));
 app.use('/api/user/sendmail', require('./routes/SendMail'));
 app.use('/api/user/forgetpassword', require('./routes/ForgetPassword'));
+app.use('/api/user/watchedinfo', require('./routes/WatchedInfo'));
+app.use('/api/user/getwatchedinfo', require('./routes/GetWatchedInfo'));
+
+
 // ADMIN ICIN
 app.use('/api/adminlogin', require('./routes/Admin/AdminLogin'));
 app.use('/api/addcategory', require('./routes/Admin/AddCategory'));
