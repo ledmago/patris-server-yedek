@@ -15,6 +15,7 @@ const WatchedInfo = require('../Schemas/WatchedInfo');
 var nodemailer = require('nodemailer');
 const ErrorHandler = require('./ErrorHandler');
 const { schema } = require('../Schemas/User');
+const Payments = require('../Schemas/Payments');
 
 function firstNameValidator(firstName, res) {
     const length = validator.isByteLength(firstName, { min: 2, max: 20 }) // length should be between 4 and 10
@@ -442,36 +443,6 @@ const sendMail = async (req, res) => {
 
 
 
-    // const { email, title, content } = req.body;
-    // var mail = nodemailer.createTransport({
-    //     host: "in-v3.mailjet.com",
-    //     port: 587,
-    //     secure: false, // upgrade later with STARTTLS
-    //     auth: {
-    //         user: "in-v3.mailjet.com",
-    //         pass: "c3030f9e41dece90339d67a5be03bf99"
-    //     }
-    // });
-
-    // var mailOptions = {
-    //     from: 'ledmago@gmail.com',
-    //     to: 'ledmago@gmail.com',
-    //     subject: 'Sending Email via Node.js',
-    //     text: 'That was easy!'
-    // };
-
-    // mail.sendMail(mailOptions, function (error, info) {
-    //     if (error) {
-    //         console.log(error);
-    //         res.send(error)
-    //     } else {
-    //         res.send(info.response)
-    //         console.log('Email sent: ' + info.response);
-    //     }
-    // });
-
-
-
 }
 
 const forgetPassword = async (req, res) => {
@@ -597,5 +568,42 @@ const getWatchedInfo = async (req, res) => {
 }
 
 
+const paymentSuccess = async (req, res) => {
+    try {
+        const { userToken, paymentId, subscriptionType, paymentDate, amount, date } = req.body;
 
-module.exports = { registerUser, logOut, login, getVideo, getAllVideos, getCategory, getAllCategories, getAllVideoParts, getVideoPart, refreshToken, changeUserProfile, isUserSubscribed, changePassword, sendMail, forgetPassword, watchedInfo, getWatchedInfo };
+        const result = jwt.verify(userToken, config.privateKey);
+
+        const user = await User.findOne({ email: result.email })
+
+        if (user) {
+
+            const newPayment = new Payments({
+                userId: user._id,
+                paymentId,
+                date: paymentDate,
+                amount: amount,
+                subscriptionType
+            });
+            await newPayment.save();
+            const newDate = new Date();
+            const subscriptionEndDate = newDate.setMonth(newDate.getMonth() + subscriptionType)
+
+            user.updateOne({ subscription: true, subscriptionEndDate: subscriptionEndDate })
+            res.status(200).send({ message: "ok" })
+        }
+
+
+
+
+
+
+    }
+    catch (e) {
+        new errorHandler(res, 500, 1);
+        console.log(e)
+    }
+}
+
+
+module.exports = { registerUser, logOut, login, getVideo, getAllVideos, getCategory, getAllCategories, getAllVideoParts, getVideoPart, refreshToken, changeUserProfile, isUserSubscribed, changePassword, sendMail, forgetPassword, watchedInfo, getWatchedInfo, paymentSuccess };
