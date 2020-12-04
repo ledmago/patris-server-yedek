@@ -49,6 +49,8 @@ app.use('/api/user/forgetpassword', require('./routes/ForgetPassword'));
 app.use('/api/user/watchedinfo', require('./routes/WatchedInfo'));
 app.use('/api/user/getwatchedinfo', require('./routes/GetWatchedInfo'));
 app.use('/api/user/paymentsuccess', require('./routes/PaymentSuccess'));
+app.use('/api/user/paymentcallback', require('./routes/PaymentCallBack'));
+
 
 // ADMIN ICIN
 app.use('/api/adminlogin', require('./routes/Admin/AdminLogin'));
@@ -77,4 +79,4 @@ app.use('/api/deleteadmin', require('./routes/Admin/DeleteAdmin'));
 
 
 
-server.listen(Port, () => console.log('Server started'));
+server.listen(Port, () => console.log('Server started',));
