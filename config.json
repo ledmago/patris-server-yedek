@@ -6,5 +6,10 @@
         "apiKey": "sandbox-gi4Xr0kCAnf3pC6gz0sK99eqU4c9GYRR",
         "secretKey": "sandbox-f3fVGFkpNxRAKxVMNktbMcNLkmZFsgnR",
         "uri": "https://sandbox-api.iyzipay.com"
+    },
+    "prices": {
+        "3": "499.0",
+        "6": "599.0",
+        "12": "699.0"
     }
 }
