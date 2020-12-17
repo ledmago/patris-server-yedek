@@ -12,6 +12,7 @@ const VideoPart = require('../Schemas/VideoParts');
 const Admins = require('../Schemas/Admins');
 const { findById } = require('../Schemas/User');
 const Axios = require('axios');
+const User = require('../Schemas/User');
 
 const adminLogin = async (req, res) => {
 
@@ -440,7 +441,20 @@ const deleteAdmin = async (req, res) => {
     }
 }
 
+const getAllUser = async (req, res) => {
+    try {
+        if (isAdmin(req)) { // Admin ise
+
+            const users = await User.find()
+            res.status(200).send({ users: users })
+        }
+    }
+    catch (e) {
+        new errorHandler(res, 500, 0)
+    }
+
+}
 
 
 // Video Part İşlemleri End
-module.exports = { adminLogin, addCategory, getCategory, getAllCategories, updateCategory, deleteCategory, addVideo, getVideo, getAllVideos, updateVideo, deleteVideo, addVideoPart, getVideoPart, getAllVideoParts, updateVideoPart, deleteVideoPart, addAdmin, getAllAdmins, updateAdmin, deleteAdmin }
+module.exports = { adminLogin, addCategory, getCategory, getAllCategories, updateCategory, deleteCategory, addVideo, getVideo, getAllVideos, updateVideo, deleteVideo, addVideoPart, getVideoPart, getAllVideoParts, updateVideoPart, deleteVideoPart, addAdmin, getAllAdmins, updateAdmin, deleteAdmin, getAllUser }

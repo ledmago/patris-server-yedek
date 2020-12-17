@@ -1,5 +1,6 @@
 const express = require('express');
-const Port = process.env.Port || 1337;
+// const Port = process.env.Port || 1337
+const Port = 443;
 const connectDB = require('./consts/DbConnection');
 const app = express();
 const config = require('./config.json');
@@ -72,7 +73,7 @@ app.use('/api/deletevideopart', require('./routes/Admin/DeleteVideoPart'));
 app.use('/api/getalladmins', require('./routes/Admin/GetAllAdmins'));
 app.use('/api/updateadmin', require('./routes/Admin/UpdateAdmin'));
 app.use('/api/deleteadmin', require('./routes/Admin/DeleteAdmin'));
-
+app.use('/api/getalluser', require('./routes/Admin/GetAllUser'));
 // -- ROUTES END -- //
 
 
