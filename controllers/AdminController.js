@@ -13,6 +13,8 @@ const Admins = require('../Schemas/Admins');
 const { findById } = require('../Schemas/User');
 const Axios = require('axios');
 const User = require('../Schemas/User');
+const Settings = require('../Schemas/Settings');
+const { set } = require('mongoose');
 
 const adminLogin = async (req, res) => {
 
@@ -455,6 +457,74 @@ const getAllUser = async (req, res) => {
 
 }
 
+const getSettings = async (req, res) => {
+    try {
+
+
+        const settings = await Settings.find().limit(1)
+        res.status(200).send({ settings: settings })
+
+    }
+    catch (e) {
+        new errorHandler(res, 500, 0)
+    }
+
+}
+
+const changeSettings = async (req, res) => {
+    try {
+        if (isAdmin(req)) { // Admin ise
+
+
+            const { mainColor,
+                secondColor,
+                shareButton,
+                profileColor,
+                faqColor,
+                savedColor,
+                contact,
+                navigationColor } = req.body;
+
+            const settingsCount = await Settings.estimatedDocumentCount()
+            if (settingsCount > 0) {
+
+                const settings = await Settings.updateOne({}, {
+                    mainColor,
+                    secondColor,
+                    shareButton,
+                    profileColor,
+                    faqColor,
+                    savedColor,
+                    contact,
+                    navigationColor
+                });
+                res.status(200).send({ message: "updated", settingsCount: settingsCount })
+
+            }
+            else {
+
+                const newSettings = new Settings({
+                    mainColor,
+                    secondColor,
+                    shareButton,
+                    profileColor,
+                    faqColor,
+                    savedColor,
+                    contact,
+                    navigationColor
+                });
+                newSettings.save();
+                res.status(200).send({ message: "created" })
+            }
+
+        }
+    }
+    catch (e) {
+        new errorHandler(res, 500, 0)
+    }
+
+}
+
 
 // Video Part İşlemleri End
-module.exports = { adminLogin, addCategory, getCategory, getAllCategories, updateCategory, deleteCategory, addVideo, getVideo, getAllVideos, updateVideo, deleteVideo, addVideoPart, getVideoPart, getAllVideoParts, updateVideoPart, deleteVideoPart, addAdmin, getAllAdmins, updateAdmin, deleteAdmin, getAllUser }
+module.exports = { adminLogin, addCategory, getCategory, getAllCategories, updateCategory, deleteCategory, addVideo, getVideo, getAllVideos, updateVideo, deleteVideo, addVideoPart, getVideoPart, getAllVideoParts, updateVideoPart, deleteVideoPart, addAdmin, getAllAdmins, updateAdmin, deleteAdmin, getAllUser, changeSettings, getSettings }

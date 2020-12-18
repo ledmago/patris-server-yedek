@@ -74,6 +74,8 @@ app.use('/api/getalladmins', require('./routes/Admin/GetAllAdmins'));
 app.use('/api/updateadmin', require('./routes/Admin/UpdateAdmin'));
 app.use('/api/deleteadmin', require('./routes/Admin/DeleteAdmin'));
 app.use('/api/getalluser', require('./routes/Admin/GetAllUser'));
+app.use('/api/getsettings', require('./routes/Admin/GetSettings'));
+app.use('/api/changesettings', require('./routes/Admin/ChangeSettings'));
 // -- ROUTES END -- //
 
 
