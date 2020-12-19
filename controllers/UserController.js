@@ -267,7 +267,6 @@ const getAllCategories = async (req, res) => {
             let { lang } = req.body;
 
             if (!lang) lang = "en";
-            console.log(lang)
             const category = await Category.find()
 
             category.sort((a, b) => (a.categoryNumber > b.categoryNumber) ? 1 : ((b.categoryNumber > a.categoryNumber) ? -1 : 0));
@@ -728,7 +727,6 @@ const paymentCallBack = async (req, res) => {
                 const findPayment = await Payments.findOne({ iyziCoToken: req.body.token })
 
                 const user = await User.findById(findPayment.userId)
-                console.log(findPayment, user)
                 if (user) {
 
                     const newPayment = await findPayment.updateOne({ isPaid: true })
@@ -774,7 +772,6 @@ const getSuggestedVideos = async (req, res) => {
 
 
         const getCategory = await Category.find({ lang: lang }).lean();
-        console.log(getCategory.length)
         for (var i = 0; i < getCategory.length; i++) {
             let videos = await Video.find({ categoryId: getCategory[i]._id }).limit(4).lean();
             for (var q = 0; q < videos.length; q++) {
