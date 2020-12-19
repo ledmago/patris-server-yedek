@@ -17,6 +17,7 @@ const ErrorHandler = require('./ErrorHandler');
 const { schema } = require('../Schemas/User');
 const Payments = require('../Schemas/Payments');
 var Iyzipay = require('iyzipay');
+const Prices = require('../Schemas/Prices');
 var iyzipay = new Iyzipay(config.iyziCo);
 
 
@@ -433,8 +434,9 @@ const isUserSubscribed = async (req, res) => {
         if (user) {
             let subscriptionEndDate = new Date(user.subscriptionEndDate).getTime();
             let nowDate = new Date().getTime();
-            if (user.subscription && nowDate < subscriptionEndDate) {
-                res.status(200).send({ subscribe: true });
+            // if (user.subscription && nowDate < subscriptionEndDate) 
+            if (nowDate < subscriptionEndDate) {
+                res.status(200).send({ subscribe: true, subscriptionEndDate: subscriptionEndDate });
             }
             else {
                 res.status(500).send({ subscribe: false });
@@ -614,19 +616,35 @@ const getWatchedInfo = async (req, res) => {
 }
 
 const paymentForm = async (req, res) => {
-
-    const { userToken, subscriptionType } = req.body;
-
+    // try {
+    const { userToken, subscriptionType, lang } = req.body;
+    if (!lang) lang = "en";
+    const getPrice = await Prices.find().limit(1);
+    const defaultPrice = getPrice[0][lang];
     const result = jwt.verify(userToken, config.privateKey);
-    const paidPrice = config.prices[subscriptionType]
+    console.log(defaultPrice)
+    const paidPrice = defaultPrice[subscriptionType];
     const user = await User.findOne({ email: result.email })
+    let currency;
+    switch (defaultPrice.currency) {
+        case "TR": currency = Iyzipay.CURRENCY.TRY; break;
+        case "USD": currency = Iyzipay.CURRENCY.USD; break;
+        case "EUR": currency = Iyzipay.CURRENCY.EUR; break;
+        case "RUB": currency = Iyzipay.CURRENCY.RUB; break;
+        case "GBP": currency = Iyzipay.CURRENCY.GBP; break;
+        case "IRR": currency = Iyzipay.CURRENCY.IRR; break;
+        case "NOK": currency = Iyzipay.CURRENCY.NOK; break;
+        case "CHF": currency = Iyzipay.CURRENCY.CHF; break;
+        default: currency = Iyzipay.CURRENCY.TRY; break;
+    }
+
 
     var request = {
         locale: Iyzipay.LOCALE.EN,
         conversationId: "canerkocas06@gmail.com",
         price: Number(paidPrice),
         paidPrice: paidPrice,
-        currency: Iyzipay.CURRENCY.TRY,
+        currency: currency,
         basketId: 'B67832',
         paymentGroup: Iyzipay.PAYMENT_GROUP.PRODUCT,
         callbackUrl: 'http://' + req.get('host') + '/api/user/paymentcallback',
@@ -696,7 +714,10 @@ const paymentForm = async (req, res) => {
 
     });
 
-
+    // }
+    // catch (e) {
+    //     new errorHandler(res, 500, 1);
+    // }
 
 }
 

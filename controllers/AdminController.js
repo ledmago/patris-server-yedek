@@ -14,6 +14,7 @@ const { findById } = require('../Schemas/User');
 const Axios = require('axios');
 const User = require('../Schemas/User');
 const Settings = require('../Schemas/Settings');
+const Prices = require('../Schemas/Prices');
 const { set } = require('mongoose');
 
 const adminLogin = async (req, res) => {
@@ -530,6 +531,75 @@ const changeSettings = async (req, res) => {
 
 }
 
+const getPrices = async (req, res) => {
+    try {
+
+        let { lang } = req.body;
+        if (!lang) lang = "en";
+
+        const prices = await Prices.find().limit(1)
+
+        if (lang == "all") {
+            res.status(200).send({ prices: prices[0] })
+        }
+        else {
+            res.status(200).send({ price: prices[0][lang] })
+        }
+
+
+    }
+    catch (e) {
+        new errorHandler(res, 500, 0)
+    }
+
+}
+
+const changePrices = async (req, res) => {
+    try {
+        if (isAdmin(req)) { // Admin ise
+
+
+            const { tr,
+                ar,
+                en,
+                fa,
+                ru } = req.body;
+
+
+            const pricesCount = await Prices.estimatedDocumentCount()
+            if (pricesCount > 0) {
+
+                const prices = await Prices.updateOne({}, {
+                    tr,
+                    ar,
+                    en,
+                    fa,
+                    ru
+                });
+                res.status(200).send({ message: "updated", prices: prices, pricesCount: pricesCount })
+
+            }
+            else {
+
+                const newPrices = new Prices({
+                    tr,
+                    ar,
+                    en,
+                    fa,
+                    ru
+                });
+                newPrices.save();
+                res.status(200).send({ message: "created" })
+            }
+
+        }
+    }
+    catch (e) {
+        new errorHandler(res, 500, 0)
+    }
+
+}
+
 
 // Video Part İşlemleri End
-module.exports = { adminLogin, addCategory, getCategory, getAllCategories, updateCategory, deleteCategory, addVideo, getVideo, getAllVideos, updateVideo, deleteVideo, addVideoPart, getVideoPart, getAllVideoParts, updateVideoPart, deleteVideoPart, addAdmin, getAllAdmins, updateAdmin, deleteAdmin, getAllUser, changeSettings, getSettings }
+module.exports = { adminLogin, addCategory, getCategory, getAllCategories, updateCategory, deleteCategory, addVideo, getVideo, getAllVideos, updateVideo, deleteVideo, addVideoPart, getVideoPart, getAllVideoParts, updateVideoPart, deleteVideoPart, addAdmin, getAllAdmins, updateAdmin, deleteAdmin, getAllUser, changeSettings, getSettings, getPrices, changePrices }

@@ -78,6 +78,8 @@ app.use('/api/deleteadmin', require('./routes/Admin/DeleteAdmin'));
 app.use('/api/getalluser', require('./routes/Admin/GetAllUser'));
 app.use('/api/getsettings', require('./routes/Admin/GetSettings'));
 app.use('/api/changesettings', require('./routes/Admin/ChangeSettings'));
+app.use('/api/getprices', require('./routes/GetPrices'));
+app.use('/api/changeprices', require('./routes/ChangePrices'));
 // -- ROUTES END -- //
 
 
