@@ -467,7 +467,7 @@ const getSettings = async (req, res) => {
 
 
         const settings = await Settings.find().limit(1)
-        res.status(200).send({ settings: settings })
+        res.status(200).send({ settings: settings[0] })
 
     }
     catch (e) {
