@@ -58,10 +58,12 @@ const addCategory = async (req, res) => {
     if (isAdmin(req)) { // Admin ise
         const params = ['categoryName', 'categoryNumber'];
         if (!checkMissingParams(params, req, res)) return;
-        const { categoryName, categoryNumber } = req.body;
+        let { categoryName, categoryNumber, lang } = req.body;
+        if (!lang) lang = "en";
         const addCategory = new Category({
             categoryName,
-            categoryNumber
+            categoryNumber,
+            lang
         });
         await addCategory.save();
         res.status(200).send({ message: "category added" })
@@ -87,10 +89,13 @@ const getCategory = async (req, res) => {
 const getAllCategories = async (req, res) => {
     try {
         if (isAdmin(req)) { // Admin ise
-            // No need any parameters
-            const category = await Category.find()
+            let { lang } = req.body;
 
+            let category;
+            if (!lang || lang.length < 1) category = await Category.find()
+            else category = await Category.find({ lang })
             category.sort((a, b) => (a.categoryNumber > b.categoryNumber) ? 1 : ((b.categoryNumber > a.categoryNumber) ? -1 : 0));
+
             res.status(200).send({ data: category })
         }
     }

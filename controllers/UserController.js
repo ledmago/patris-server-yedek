@@ -264,10 +264,53 @@ const getAllCategories = async (req, res) => {
     try {
         if (await checkLogin(req)) { // Admin ise
             // No need any parameters
+            let { lang } = req.body;
+
+            if (!lang) lang = "en";
+            console.log(lang)
             const category = await Category.find()
 
             category.sort((a, b) => (a.categoryNumber > b.categoryNumber) ? 1 : ((b.categoryNumber > a.categoryNumber) ? -1 : 0));
+
             res.status(200).send({ data: category })
+        }
+    }
+    catch (e) {
+        new errorHandler(res, 500, 0)
+    }
+}
+
+const getListCombo = async (req, res) => {
+    try {
+        var comboList = [];
+        if (await checkLogin(req)) { // Admin ise
+            // No need any parameters
+            let { lang } = req.body;
+            if (!lang) lang = "en";
+
+
+            const category = await Category.find({ lang }).lean();
+
+            for (var videoIndex = 0; videoIndex < category.length; videoIndex++) {
+                const currentCategory = category[videoIndex];
+                const videos = await Video.find({ categoryId: currentCategory._id }).lean();
+
+                for (var videoIndex = 0; videoIndex < videos.length; videoIndex++) {
+                    const currentVideo = videos[videoIndex];
+                    const videoPart = await VideoPart.find({ videoId: currentVideo._id }).lean();
+                    currentVideo.videoparts = videoPart;
+                }
+
+                currentCategory.videos = videos;
+
+                comboList = category;
+
+
+            }
+
+
+            category.sort((a, b) => (a.categoryNumber > b.categoryNumber) ? 1 : ((b.categoryNumber > a.categoryNumber) ? -1 : 0));
+            res.status(200).send({ data: comboList })
         }
     }
     catch (e) {
@@ -721,5 +764,43 @@ const paymentCallBack = async (req, res) => {
 
 
 }
+const getSuggestedVideos = async (req, res) => {
+    // try {
+    if (await checkLogin(req)) {
 
-module.exports = { registerUser, logOut, login, getVideo, getAllVideos, getCategory, getAllCategories, getAllVideoParts, getVideoPart, refreshToken, changeUserProfile, isUserSubscribed, changePassword, sendMail, forgetPassword, watchedInfo, getWatchedInfo, paymentForm, paymentCallBack };
+        let returnList = [];
+        let { lang } = req.body;
+        if (!lang) lang = "en";
+
+
+        const getCategory = await Category.find({ lang: lang }).lean();
+        console.log(getCategory.length)
+        for (var i = 0; i < getCategory.length; i++) {
+            let videos = await Video.find({ categoryId: getCategory[i]._id }).limit(4).lean();
+            for (var q = 0; q < videos.length; q++) {
+                videos[q].category = getCategory[i];
+            }
+
+            returnList = videos;
+        }
+
+
+        for (var x = 0; x < returnList.length; x++) {
+            returnList[x].videoparts = await VideoPart.find({ videoId: returnList[x]._id }).lean();
+        }
+
+
+        res.send({ data: returnList })
+    }
+    else {
+        new errorHandler(res, 500, 0);
+    }
+    // }
+    // catch (e) {
+    //     new errorHandler(res, 500, 1);
+    //     console.log(e)
+    // }
+
+
+}
+module.exports = { registerUser, logOut, login, getVideo, getAllVideos, getCategory, getAllCategories, getAllVideoParts, getVideoPart, refreshToken, changeUserProfile, isUserSubscribed, changePassword, sendMail, forgetPassword, watchedInfo, getWatchedInfo, paymentForm, paymentCallBack, getListCombo, getSuggestedVideos };

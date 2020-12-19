@@ -12,6 +12,7 @@ const videoSchema = new Schema({
     thumb: { type: Object, required: false },
     freeTrial: { type: Boolean, required: false, default: false },
 
+
 });
 
 videoSchema.set('toJSON', { virtuals: true });
