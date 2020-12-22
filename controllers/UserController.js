@@ -529,7 +529,7 @@ const forgetPassword = async (req, res) => {
             })
         request
             .then((result) => {
-                console.log(result.body)
+                // console.log(result.body)
                 res.send("ok")
             })
             .catch((err) => {
@@ -622,7 +622,7 @@ const paymentForm = async (req, res) => {
     const getPrice = await Prices.find().limit(1);
     const defaultPrice = getPrice[0][lang];
     const result = jwt.verify(userToken, config.privateKey);
-    console.log(defaultPrice)
+    // console.log(defaultPrice)
     const paidPrice = defaultPrice[subscriptionType];
     const user = await User.findOne({ email: result.email })
     let currency;
