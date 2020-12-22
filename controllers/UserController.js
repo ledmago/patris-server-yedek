@@ -481,7 +481,7 @@ const sendMail = async (req, res) => {
         })
     request
         .then((result) => {
-            console.log(result.body)
+            // console.log(result.body)
             res.send("ok")
         })
         .catch((err) => {
@@ -705,7 +705,24 @@ const paymentForm = async (req, res) => {
         await createPayment.save();
 
         if (result.status == 'success') {
-            res.send(`<body style="margin:0"><iframe src="${result.paymentPageUrl}&iframe=true" style="width:100%;height:100%;border:0" allowfullscreen></iframe><body>`)
+            res.send(`
+            <html>
+            <head>
+    <meta charset="UTF-8">
+    <title>iyzico Payment Page</title>
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="iyzico team">
+    <link rel="icon" href="/img/favicon.ico">
+
+       <body style="margin:0">
+            
+            <iframe src="${result.paymentPageUrl}&iframe=true" style="width:100%;height:100%;border:0" allowfullscreen></iframe><body>
+            
+            </html>
+            `)
 
         }
         else {
