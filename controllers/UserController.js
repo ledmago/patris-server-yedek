@@ -282,6 +282,7 @@ const getAllCategories = async (req, res) => {
 
 const getListCombo = async (req, res) => {
     try {
+
         var comboList = [];
         if (await checkLogin(req)) { // Admin ise
             // No need any parameters
@@ -291,8 +292,10 @@ const getListCombo = async (req, res) => {
 
             const category = await Category.find({ lang }).lean();
 
-            for (var videoIndex = 0; videoIndex < category.length; videoIndex++) {
-                const currentCategory = category[videoIndex];
+            for (var categoryIndex = 0; categoryIndex < category.length; categoryIndex++) {
+
+                const currentCategory = category[categoryIndex];
+
                 const videos = await Video.find({ categoryId: currentCategory._id }).lean();
 
                 for (var videoIndex = 0; videoIndex < videos.length; videoIndex++) {
@@ -301,7 +304,13 @@ const getListCombo = async (req, res) => {
                     currentVideo.videoparts = videoPart;
                 }
 
-                currentCategory.videos = videos;
+                if (videos) {
+
+                    currentCategory.videos = videos;
+                }
+                else {
+                    currentCategory.videos = [];
+                }
 
                 comboList = category;
 
