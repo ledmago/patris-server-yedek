@@ -626,9 +626,8 @@ const getWatchedInfo = async (req, res) => {
 
 const paymentForm = async (req, res) => {
     // try {
-    const { userToken, subscriptionType, priceId } = req.body;
+    const { userToken, priceId } = req.body;
     const getPrice = await Prices.findById(priceId);
-    if (getPrice) new errorHandler(res, 500, 1);
 
     const result = jwt.verify(userToken, config.privateKey);
     const paidPrice = getPrice.price;
@@ -706,7 +705,7 @@ const paymentForm = async (req, res) => {
             userId: user._id,
             iyziCoToken: iyzicoToken,
             amount: paidPrice,
-            subscriptionType: subscriptionType,
+            subscriptionType: getPrice.month,
             date: new Date(),
             isPaid: false
         })
