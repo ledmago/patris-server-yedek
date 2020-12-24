@@ -538,17 +538,18 @@ const getPrices = async (req, res) => {
         if (!lang) lang = "en";
 
         if (lang == "all") {
-            const prices = await Prices.find();
-            res.status(200).send({ prices: prices }).sort({ month: -1 })
+            const prices = await Prices.find().sort({ month: 1 })
+            res.status(200).send({ prices: prices })
         }
         else {
-            const prices = await Prices.find({ lang: lang }).sort({ month: -1 })
+            const prices = await Prices.find({ lang: lang }).sort({ month: 1 })
             res.status(200).send({ price: prices })
         }
 
 
     }
     catch (e) {
+        // console.log(e)
         new errorHandler(res, 500, 0)
     }
 
@@ -559,10 +560,7 @@ const changePrices = async (req, res) => {
         if (isAdmin(req)) { // Admin ise
             const { lang, month, price, priceId, currency } = req.body;
             const updatePrice = await Prices.findByIdAndUpdate(priceId, { lang: lang, month: month, price: price, currency: currency });
-            if (updatePrice) res.status(200).send({ message: "updated" })
-            else new errorHandler(res, 500, 0)
-
-
+            res.status(200).send({ message: "updated" })
         }
     }
     catch (e) {
@@ -571,6 +569,20 @@ const changePrices = async (req, res) => {
 
 }
 
+
+const deletePrice = async (req, res) => {
+    try {
+        if (isAdmin(req)) { // Admin ise
+            const { priceId } = req.body;
+            const deletePrice = await Prices.findByIdAndDelete(priceId);
+            res.status(200).send({ message: "deleted" })
+        }
+    }
+    catch (e) {
+        new errorHandler(res, 500, 0)
+    }
+
+}
 
 const addPrices = async (req, res) => {
     try {
@@ -591,4 +603,4 @@ const addPrices = async (req, res) => {
 
 
 // Video Part İşlemleri End
-module.exports = { adminLogin, addCategory, getCategory, getAllCategories, updateCategory, deleteCategory, addVideo, getVideo, getAllVideos, updateVideo, deleteVideo, addVideoPart, getVideoPart, getAllVideoParts, updateVideoPart, deleteVideoPart, addAdmin, getAllAdmins, updateAdmin, deleteAdmin, getAllUser, changeSettings, getSettings, getPrices, changePrices, addPrices }
+module.exports = { adminLogin, addCategory, getCategory, getAllCategories, updateCategory, deleteCategory, addVideo, getVideo, getAllVideos, updateVideo, deleteVideo, addVideoPart, getVideoPart, getAllVideoParts, updateVideoPart, deleteVideoPart, addAdmin, getAllAdmins, updateAdmin, deleteAdmin, getAllUser, changeSettings, getSettings, getPrices, changePrices, addPrices, deletePrice }

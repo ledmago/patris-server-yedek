@@ -81,6 +81,7 @@ app.use('/api/changesettings', require('./routes/Admin/ChangeSettings'));
 app.use('/api/getprices', require('./routes/GetPrices'));
 app.use('/api/changeprices', require('./routes/ChangePrices'));
 app.use('/api/addprice', require('./routes/AddPrice'));
+app.use('/api/deleteprice', require('./routes/DeletePrice'));
 // -- ROUTES END -- //
 
 
