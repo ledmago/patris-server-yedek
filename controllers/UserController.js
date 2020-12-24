@@ -626,16 +626,15 @@ const getWatchedInfo = async (req, res) => {
 
 const paymentForm = async (req, res) => {
     // try {
-    const { userToken, subscriptionType, lang } = req.body;
-    if (!lang) lang = "en";
-    const getPrice = await Prices.find().limit(1);
-    const defaultPrice = getPrice[0][lang];
+    const { userToken, subscriptionType, priceId } = req.body;
+    const getPrice = await Prices.findById(priceId);
+    if (getPrice) new errorHandler(res, 500, 1);
+
     const result = jwt.verify(userToken, config.privateKey);
-    // console.log(defaultPrice)
-    const paidPrice = defaultPrice[subscriptionType];
+    const paidPrice = getPrice.price;
     const user = await User.findOne({ email: result.email })
     let currency;
-    switch (defaultPrice.currency) {
+    switch (getPrice.currency) {
         case "TR": currency = Iyzipay.CURRENCY.TRY; break;
         case "USD": currency = Iyzipay.CURRENCY.USD; break;
         case "EUR": currency = Iyzipay.CURRENCY.EUR; break;

@@ -537,13 +537,13 @@ const getPrices = async (req, res) => {
         let { lang } = req.body;
         if (!lang) lang = "en";
 
-        const prices = await Prices.find().limit(1)
-
         if (lang == "all") {
-            res.status(200).send({ prices: prices[0] })
+            const prices = await Prices.find();
+            res.status(200).send({ prices: prices }).sort({ month: -1 })
         }
         else {
-            res.status(200).send({ price: prices[0][lang] })
+            const prices = await Prices.find({ lang: lang }).sort({ month: -1 })
+            res.status(200).send({ price: prices })
         }
 
 
@@ -557,40 +557,11 @@ const getPrices = async (req, res) => {
 const changePrices = async (req, res) => {
     try {
         if (isAdmin(req)) { // Admin ise
+            const { lang, month, price, priceId, currency } = req.body;
+            const updatePrice = await Prices.findByIdAndUpdate(priceId, { lang: lang, month: month, price: price, currency: currency });
+            if (updatePrice) res.status(200).send({ message: "updated" })
+            else new errorHandler(res, 500, 0)
 
-
-            const { tr,
-                ar,
-                en,
-                fa,
-                ru } = req.body;
-
-
-            const pricesCount = await Prices.estimatedDocumentCount()
-            if (pricesCount > 0) {
-
-                const prices = await Prices.updateOne({}, {
-                    tr,
-                    ar,
-                    en,
-                    fa,
-                    ru
-                });
-                res.status(200).send({ message: "updated", prices: prices, pricesCount: pricesCount })
-
-            }
-            else {
-
-                const newPrices = new Prices({
-                    tr,
-                    ar,
-                    en,
-                    fa,
-                    ru
-                });
-                newPrices.save();
-                res.status(200).send({ message: "created" })
-            }
 
         }
     }
@@ -601,5 +572,23 @@ const changePrices = async (req, res) => {
 }
 
 
+const addPrices = async (req, res) => {
+    try {
+        if (isAdmin(req)) { // Admin ise
+            const { lang, month, price, currency } = req.body;
+            const createPrice = new Prices({ lang, month, price, currency });
+            await createPrice.save();
+            res.status(200).send({ message: "created" })
+        }
+    }
+    catch (e) {
+        new errorHandler(res, 500, 0)
+    }
+
+}
+
+
+
+
 // Video Part İşlemleri End
-module.exports = { adminLogin, addCategory, getCategory, getAllCategories, updateCategory, deleteCategory, addVideo, getVideo, getAllVideos, updateVideo, deleteVideo, addVideoPart, getVideoPart, getAllVideoParts, updateVideoPart, deleteVideoPart, addAdmin, getAllAdmins, updateAdmin, deleteAdmin, getAllUser, changeSettings, getSettings, getPrices, changePrices }
+module.exports = { adminLogin, addCategory, getCategory, getAllCategories, updateCategory, deleteCategory, addVideo, getVideo, getAllVideos, updateVideo, deleteVideo, addVideoPart, getVideoPart, getAllVideoParts, updateVideoPart, deleteVideoPart, addAdmin, getAllAdmins, updateAdmin, deleteAdmin, getAllUser, changeSettings, getSettings, getPrices, changePrices, addPrices }
