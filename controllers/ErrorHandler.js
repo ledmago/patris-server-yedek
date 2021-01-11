@@ -1,7 +1,7 @@
 const errors = require('../errors.json');
 module.exports = class ErrorHandler {
 
-    codeHandler = (code) => {
+    codeHandler(code) {
         if (errors[code]) {
             this.message.message = errors[code];
         }
