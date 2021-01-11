@@ -1,6 +1,6 @@
 const express = require('express');
 // const Port = process.env.Port || 1337
-const Port = 443;
+const Port = 1337;
 const connectDB = require('./consts/DbConnection');
 const app = express();
 const config = require('./config.json');
