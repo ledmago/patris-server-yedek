@@ -1,5 +1,5 @@
 {
-    "DBuri": "mongodb://admin:patrisserver1234@18.196.198.164:27017/?authSource=admin&readPreference=primary&gssapiServiceName=mongodb&appname=MongoDB%20Compass&ssl=false",
+    "DBuri": "mongodb://127.0.0.1:27017/?authSource=admin&readPreference=primary&gssapiServiceName=mongodb&appname=MongoDB%20Compass&ssl=false",
     "privateKey": "secretKey00009",
     "mailAdress": "ledmago@gmail.com",
     "iyziCo": {

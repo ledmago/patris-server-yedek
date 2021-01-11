@@ -1,6 +1,6 @@
 const express = require('express');
 // const Port = process.env.Port || 1337
-const Port = 1337;
+const Port = 80;
 const connectDB = require('./consts/DbConnection');
 const app = express();
 const config = require('./config.json');
@@ -18,8 +18,8 @@ app.use(function (req, res, next) {
     next();
 });
 // ---------------------------------------- //
-
-
+const path = require('path');
+app.use(express.static(path.join(__dirname, 'build')));
 app.use((req, res, next) => {
 
     req.body = { ...req.body, ...req.query }
@@ -29,6 +29,7 @@ app.use((req, res, next) => {
     next();
 
 })
+
 
 
 // -- ROUTES -- //
@@ -85,7 +86,9 @@ app.use('/api/deleteprice', require('./routes/DeletePrice'));
 // -- ROUTES END -- //
 
 
-
+app.get('*', function (req, res) {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
 
 
 server.listen(Port, () => console.log('Server started',));
