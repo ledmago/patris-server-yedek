@@ -747,7 +747,7 @@ const paymentForm = async (req, res) => {
 
 const paymentCallBack = async (req, res) => {
 
-
+    console.log("Giriş 1", req.body.token)
 
     iyzipay.checkoutForm.retrieve({
         locale: Iyzipay.LOCALE.TR,
@@ -759,6 +759,7 @@ const paymentCallBack = async (req, res) => {
             // Payment Successful
 
 
+            console.log("Giriş 2")
 
 
 
@@ -767,31 +768,32 @@ const paymentCallBack = async (req, res) => {
 
 
 
-            try {
+            // try {
 
-                const findPayment = await Payments.findOne({ iyziCoToken: req.body.token })
+            const findPayment = await Payments.findOne({ iyziCoToken: req.body.token })
 
-                const user = await User.findById(findPayment.userId)
-                if (user) {
+            const user = await User.findById(findPayment.userId)
+            if (user) {
+                console.log("Giriş 3")
 
-                    const newPayment = await findPayment.updateOne({ isPaid: true })
-                    const newDate = new Date();
-                    const subscriptionEndDate = newDate.setMonth(newDate.getMonth() + findPayment.subscriptionType)
-                    await user.updateOne({ subscription: true, subscriptionEndDate: subscriptionEndDate })
-                    res.status(200).send("Payment is successful")
-                }
-
-
-
-
-
-
+                const newPayment = await findPayment.updateOne({ isPaid: true })
+                const newDate = new Date();
+                const subscriptionEndDate = newDate.setMonth(newDate.getMonth() + findPayment.subscriptionType)
+                await user.updateOne({ subscription: true, subscriptionEndDate: subscriptionEndDate })
+                res.status(200).send("Payment is successful")
             }
-            catch (e) {
-                new errorHandler(res, 500, 1);
-                res.send("Error happened")
-                console.log(e)
-            }
+
+
+
+
+
+
+            // }
+            // catch (e) {
+
+            //     res.send("Error happened")
+            //     console.log(e)
+            // }
 
 
 
