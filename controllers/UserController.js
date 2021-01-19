@@ -654,7 +654,7 @@ const paymentForm = async (req, res) => {
         currency: currency,
         basketId: 'B67832',
         paymentGroup: Iyzipay.PAYMENT_GROUP.PRODUCT,
-        callbackUrl: 'http://' + req.get('host') + '/api/user/paymentcallback',
+        callbackUrl: 'https://' + req.get('host') + '/api/user/paymentcallback',
         enabledInstallments: [2, 3, 6, 9],
         buyer: {
             id: "123456789",
@@ -696,7 +696,6 @@ const paymentForm = async (req, res) => {
             }
         ]
     };
-    console.log(request.callbackUrl)
     iyzipay.checkoutFormInitialize.create(request, async function (err, result) {
         // console.log(err, result);
         const iyzicoToken = result.token;
@@ -747,7 +746,7 @@ const paymentForm = async (req, res) => {
 
 const paymentCallBack = async (req, res) => {
 
-    console.log("Giriş 1", req.body.token)
+
 
     iyzipay.checkoutForm.retrieve({
         locale: Iyzipay.LOCALE.TR,
@@ -758,8 +757,6 @@ const paymentCallBack = async (req, res) => {
 
             // Payment Successful
 
-
-            console.log("Giriş 2")
 
 
 
@@ -774,7 +771,6 @@ const paymentCallBack = async (req, res) => {
 
             const user = await User.findById(findPayment.userId)
             if (user) {
-                console.log("Giriş 3")
 
                 const newPayment = await findPayment.updateOne({ isPaid: true })
                 const newDate = new Date();
