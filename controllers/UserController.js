@@ -696,7 +696,7 @@ const paymentForm = async (req, res) => {
             }
         ]
     };
-
+    console.log(request.callbackUrl)
     iyzipay.checkoutFormInitialize.create(request, async function (err, result) {
         // console.log(err, result);
         const iyzicoToken = result.token;
