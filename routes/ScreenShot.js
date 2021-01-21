@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const route = express.Router();
-const { takeScreenShot } = require('../controllers/UserController');
+const { takeScreenShot, getScreenShotRemains } = require('../controllers/UserController');
 
 route.post('/', async (req, res) => {
     await takeScreenShot(req, res);
