@@ -852,7 +852,7 @@ const getScreenShotRemains = async (req, res) => {
     const AttemptLeftDefault = 5;
     // try {
     const { email } = req.body;
-    const findUserInList = await ScreenShot.find({ email: email });
+    const findUserInList = await ScreenShot.exists({ email: email });
     console.log(findUserInList);
     if (findUserInList) {
         console.log(1);
