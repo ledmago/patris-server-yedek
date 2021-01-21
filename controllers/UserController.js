@@ -872,7 +872,7 @@ const takeScreenShot = async (req, res) => {
     // try {
     const { email } = req.body;
     if (email) {
-        const findUserInList = await ScreenShot.find({ email: email })
+        const findUserInList = await ScreenShot.exists({ email: email })
         if (findUserInList) {
             // update
             await ScreenShot.updateOne({ email: email }, { attemptLeft: findUserInList - 1 });
