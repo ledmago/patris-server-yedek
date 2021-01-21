@@ -875,9 +875,21 @@ const takeScreenShot = async (req, res) => {
         if (findUserInList) {
             const getUserFromList = await ScreenShot.findOne({ email: email })
             // update
-            console.log(getUserFromList)
+
             await ScreenShot.updateOne({ email: email }, { attemptLeft: Number(getUserFromList.attemptLeft) - 1 });
+
+
+            if (Number(getUserFromList.attemptLeft) - 1 < 1) {
+                // cancel the subscription
+                // Üyeliği İptal Et
+
+                User.findOneAndUpdate({ email: email }, { subscriptionEndDate: Date.now(), subscription: false })
+
+
+            }
+
             res.send({ count: Number(getUserFromList.attemptLeft) - 1 })
+
         }
         else {
             // add new
