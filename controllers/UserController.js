@@ -883,7 +883,7 @@ const takeScreenShot = async (req, res) => {
                 // cancel the subscription
                 // Üyeliği İptal Et
 
-                User.findOneAndUpdate({ email: email }, { subscriptionEndDate: Date.now(), subscription: false })
+                await User.findOneAndUpdate({ email: email }, { subscriptionEndDate: Date.now(), subscription: false })
 
 
             }
