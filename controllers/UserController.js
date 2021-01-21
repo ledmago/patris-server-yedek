@@ -14,10 +14,11 @@ const VideoPart = require('../Schemas/VideoParts');
 const WatchedInfo = require('../Schemas/WatchedInfo');
 var nodemailer = require('nodemailer');
 const ErrorHandler = require('./ErrorHandler');
-const { schema } = require('../Schemas/User');
+const { schema, count } = require('../Schemas/User');
 const Payments = require('../Schemas/Payments');
 var Iyzipay = require('iyzipay');
 const Prices = require('../Schemas/Prices');
+const ScreenShot = require('../Schemas/ScreenShots');
 var iyzipay = new Iyzipay(config.iyziCo);
 
 
@@ -842,5 +843,51 @@ const getSuggestedVideos = async (req, res) => {
     // }
 
 
+
+
 }
-module.exports = { registerUser, logOut, login, getVideo, getAllVideos, getCategory, getAllCategories, getAllVideoParts, getVideoPart, refreshToken, changeUserProfile, isUserSubscribed, changePassword, sendMail, forgetPassword, watchedInfo, getWatchedInfo, paymentForm, paymentCallBack, getListCombo, getSuggestedVideos };
+
+const AttemptLeftDefault = 5;
+const getScreenShotRemains = async (req, res) => {
+    try {
+        const { email } = req.body;
+        const findUserInList = await ScreenShot.find({ email: email })
+        if (findUserInList) {
+            res.send({ count: findUserInList.attemptLeft })
+        }
+        else {
+            res.send({ count: AttemptLeftDefault })
+        }
+    }
+    catch (e) {
+
+    }
+}
+const takeScreenShot = async (req, res) => {
+    try {
+        const { email } = req.body;
+        if (email) {
+            const findUserInList = await ScreenShot.find({ email: email })
+            if (findUserInList) {
+                // update
+                await ScreenShot.updateOne({ email: email }, { attemptLeft: findUserInList - 1 });
+                res.send({ count: findUserInList - 1 })
+            }
+            else {
+                // add new
+                const newScreenShot = new ScreenShot({
+                    email: email,
+                    attemptLeft: AttemptLeftDefault - 1
+                });
+                await newScreenShot.save();
+                res.send({ count: AttemptLeftDefault - 1 })
+            }
+
+        }
+    }
+    catch (e) {
+
+    }
+}
+
+module.exports = { getScreenShotRemains, takeScreenShot, registerUser, logOut, login, getVideo, getAllVideos, getCategory, getAllCategories, getAllVideoParts, getVideoPart, refreshToken, changeUserProfile, isUserSubscribed, changePassword, sendMail, forgetPassword, watchedInfo, getWatchedInfo, paymentForm, paymentCallBack, getListCombo, getSuggestedVideos };

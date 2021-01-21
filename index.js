@@ -55,6 +55,7 @@ app.use('/api/user/paymentcallback', require('./routes/PaymentCallBack'));
 app.use('/api/user/getlistcombo', require('./routes/GetListCombo'));
 app.use('/api/user/getsuggestedvideos', require('./routes/GetSuggestedVideos'));
 app.use('/api/user/getsettings', require('./routes/Admin/GetSettings'));
+app.use('/api/screenshot', require('./routes/ScreenShot'));
 
 // ADMIN ICIN
 app.use('/api/adminlogin', require('./routes/Admin/AdminLogin'));
@@ -87,7 +88,7 @@ app.use('/api/deleteprice', require('./routes/DeletePrice'));
 
 
 app.get('*', function (req, res) {
-  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+    res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
 
